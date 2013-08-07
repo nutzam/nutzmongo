@@ -101,14 +101,6 @@ public class ZMongoCollection {
         return dbc.remove(o);
     }
 
-    public DBObject findOne(Object obj) {
-        return dbc.findOne(obj);
-    }
-
-    public DBObject findOne(Object obj, DBObject fields) {
-        return dbc.findOne(obj, fields);
-    }
-
     public DBObject findAndModify(DBObject query,
                                   DBObject fields,
                                   DBObject sort,
