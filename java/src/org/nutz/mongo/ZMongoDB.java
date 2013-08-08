@@ -71,7 +71,7 @@ public class ZMongoDB {
 
         // 创建默认配置信息
         if (null == options) {
-            options = new ZMoDoc("capped:true, size:-1, max:-1");
+            options = ZMoDoc.NEW("capped:true, size:-1, max:-1");
         }
 
         return new ZMongoCollection(db.createCollection(name, options));

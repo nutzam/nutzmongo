@@ -28,6 +28,9 @@ public class ZMongoCollection {
 
     private DBCollection dbc;
 
+    // ------------------------------------------------------------------
+    // 下面是委托方法
+
     public WriteResult insert(DBObject[] arr, WriteConcern concern) {
         return dbc.insert(arr, concern);
     }
