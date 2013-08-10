@@ -21,8 +21,8 @@ public class ZMoEntityHolder {
         return ens.get(key);
     }
 
-    public void add(ZMoEntity en) {
-        ens.put(en.getKey(), en);
+    public void add(String key, ZMoEntity en) {
+        ens.put(key, en);
     }
 
     public Set<String> keys() {

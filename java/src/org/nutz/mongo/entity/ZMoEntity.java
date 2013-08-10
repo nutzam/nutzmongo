@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nutz.lang.Lang;
+import org.nutz.lang.Strings;
 import org.nutz.lang.born.Borning;
 
 /**
@@ -17,11 +18,6 @@ public class ZMoEntity {
     enum Type {
         MAP, POJO
     }
-
-    /**
-     * 实体的键值，如果 Map 是一个自定义的字符串，如果是 POJO 是对象的 className
-     */
-    private String key;
 
     /**
      * 指定了这个映射是 Map 还是 Pojo
@@ -48,17 +44,19 @@ public class ZMoEntity {
      */
     private Map<String, ZMoField> byMongo;
 
+    /**
+     * 默认的字段映射方法，这个字段，并不会在 getXXXXNames() 时出现
+     */
+    private ZMoField defaultField;
+
     public ZMoEntity() {
         byJava = new HashMap<String, ZMoField>();
         byMongo = new HashMap<String, ZMoField>();
+        defaultField = null;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
+    public void setDefaultField(ZMoField defaultField) {
+        this.defaultField = defaultField;
     }
 
     public ZMoEntity forMap() {
@@ -83,20 +81,26 @@ public class ZMoEntity {
         return javaType;
     }
 
-    public void setJavaType(Class<?> javaType) {
+    public ZMoEntity setJavaType(Class<?> javaType) {
         this.javaType = javaType;
+        return this;
     }
 
     public Object born(Object... args) {
         return borning.born(args);
     }
 
-    public void setBorning(Borning<?> borning) {
+    public ZMoEntity setBorning(Borning<?> borning) {
         this.borning = borning;
+        return this;
     }
 
     public void addField(ZMoField fld) {
-
+        fld.setParent(this);
+        if (!Strings.isBlank(fld.getJavaName()))
+            byJava.put(fld.getJavaName(), fld);
+        if (!Strings.isBlank(fld.getMongoName()))
+            byMongo.put(fld.getMongoName(), fld);
     }
 
     public Set<String> getJavaNames(Object obj) {
@@ -120,10 +124,11 @@ public class ZMoEntity {
      * 
      * @param name
      *            字段名
-     * @return 实体字段，如果没找到回 null
+     * @return 实体字段，如果没找到回 defaultField
      */
     public ZMoField getJavaField(String name) {
-        return byJava.get(name);
+        ZMoField fld = byJava.get(name);
+        return fld == null ? defaultField : fld;
     }
 
     /**
@@ -137,7 +142,7 @@ public class ZMoEntity {
     public ZMoField javaField(String name) {
         ZMoField fld = getJavaField(name);
         if (null == fld) {
-            throw Lang.makeThrow("no such field! %s->%s", key, name);
+            throw Lang.makeThrow("no such field! %s->%s", javaType, name);
         }
         return fld;
     }
@@ -147,10 +152,11 @@ public class ZMoEntity {
      * 
      * @param name
      *            字段名
-     * @return 实体字段，如果没找到回 null
+     * @return 实体字段，如果没找到回 defaultField
      */
     public ZMoField getMongoField(String name) {
-        return byMongo.get(name);
+        ZMoField fld = byMongo.get(name);
+        return fld == null ? defaultField : fld;
     }
 
     /**
@@ -164,7 +170,7 @@ public class ZMoEntity {
     public ZMoField mongoField(String name) {
         ZMoField fld = getMongoField(name);
         if (null == fld) {
-            throw Lang.makeThrow("no such field! %s->%s", key, name);
+            throw Lang.makeThrow("no such field! %s->%s", javaType, name);
         }
         return fld;
     }
@@ -198,7 +204,6 @@ public class ZMoEntity {
 
     public ZMoEntity clone() {
         ZMoEntity en = new ZMoEntity();
-        en.setKey(key);
         en.setJavaType(javaType);
         en.setBorning(borning);
         en.type = this.type;

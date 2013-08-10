@@ -31,7 +31,7 @@ public class ZMoArrayAdaptor implements ZMoAdaptor {
             if (fld == null) {
                 arr = Array.newInstance(Object.class, list.size());
             } else {
-                arr = Array.newInstance(fld.getEleType(), list.size());
+                arr = fld.getBorning().born(list.size());
                 en = ZMo.me().getEntity(fld.getEleType());
             }
 

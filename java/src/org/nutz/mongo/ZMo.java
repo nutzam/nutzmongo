@@ -2,14 +2,12 @@ package org.nutz.mongo;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.nutz.lang.Lang;
-import org.nutz.lang.Mirror;
 import org.nutz.mongo.adaptor.ZMoAs;
 import org.nutz.mongo.entity.ZMoEntity;
 import org.nutz.mongo.entity.ZMoEntityHolder;
@@ -327,13 +325,12 @@ public class ZMo {
                     // 如果是 Map 或者 DBObject 用默认Map映射对象来搞
                     if (Map.class.isAssignableFrom(type) || DBObject.class.isAssignableFrom(type)) {
                         en = holder.get(DFT_MAP_KEY).clone();
-                        en.setKey(type.getName());
-                        holder.add(en);
+                        holder.add(DFT_MAP_KEY, en);
                     }
                     // 普通 POJO
                     else {
                         en = maker.make(type);
-                        holder.add(en);
+                        holder.add(type.getName(), en);
                     }
                 }
             }
@@ -359,10 +356,7 @@ public class ZMo {
 
     // 这里创建一个默认的 Map 实体
     static {
-        ZMoGeneralMapEntity en = new ZMoGeneralMapEntity();
-        en.setJavaType(HashMap.class);
-        en.setBorning(Mirror.me(HashMap.class).getBorning());
-        _me_.holder.add(en);
+        _me_.holder.add(DFT_MAP_KEY, new ZMoGeneralMapEntity());
     }
 
     /**

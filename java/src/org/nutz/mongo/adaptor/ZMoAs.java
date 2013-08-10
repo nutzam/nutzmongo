@@ -1,5 +1,7 @@
 package org.nutz.mongo.adaptor;
 
+import org.nutz.lang.Lang;
+import org.nutz.lang.Mirror;
 import org.nutz.mongo.ZMoAdaptor;
 
 /**
@@ -24,6 +26,39 @@ public class ZMoAs {
     private static ZMoAdaptor _simple = new ZMoSimpleAdaptor();
 
     private static ZMoAdaptor _smart = new ZMoSmartAdaptor();
+
+    public static ZMoAdaptor get(Class<?> type) {
+        return get(Mirror.me(type));
+    }
+
+    public static ZMoAdaptor get(Mirror<?> mi) {
+        // 简单类型
+        if (mi.isSimple()) {
+            return ZMoAs.simple();
+        }
+        // 集合
+        else if (mi.isCollection()) {
+            return ZMoAs.collection();
+        }
+        // 数组
+        else if (mi.isArray()) {
+            return ZMoAs.array();
+        }
+        // 枚举
+        else if (mi.isEnum()) {
+            return ZMoAs.ENUM();
+        }
+        // Map
+        else if (mi.isMap()) {
+            return ZMoAs.map();
+        }
+        // POJO
+        else if (mi.isPojo()) {
+            return ZMoAs.pojo();
+        }
+        // 错误
+        throw Lang.makeThrow("fail to found adaptor for type %s", mi.getType());
+    }
 
     public static ZMoAdaptor id() {
         return _id;

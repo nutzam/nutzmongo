@@ -1,28 +1,21 @@
 package org.nutz.mongo.entity;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.nutz.lang.born.Borning;
-import org.nutz.mongo.ZMo;
+import org.nutz.lang.Mirror;
 
 import com.mongodb.DBObject;
 
 public class ZMoGeneralMapEntity extends ZMoEntity {
 
-    private ZMoGeneralMapField dftfld;
-
     public ZMoGeneralMapEntity() {
-        dftfld = new ZMoGeneralMapField();
+        super();
+        setDefaultField(new ZMoGeneralMapField());
+        setJavaType(HashMap.class);
+        setBorning(Mirror.me(HashMap.class).getBorning());
     }
-
-    @Override
-    public String getKey() {
-        return ZMo.DFT_MAP_KEY;
-    }
-
-    @Override
-    public void setKey(String key) {}
 
     @Override
     public ZMoEntity forMap() {
@@ -44,29 +37,6 @@ public class ZMoGeneralMapEntity extends ZMoEntity {
         return false;
     }
 
-    @Override
-    public Class<?> getJavaType() {
-        return super.getJavaType();
-    }
-
-    @Override
-    public void setJavaType(Class<?> javaType) {
-        super.setJavaType(javaType);
-    }
-
-    @Override
-    public Object born(Object... args) {
-        return super.born(args);
-    }
-
-    @Override
-    public void setBorning(Borning<?> borning) {
-        super.setBorning(borning);
-    }
-
-    @Override
-    public void addField(ZMoField fld) {}
-
     @SuppressWarnings("unchecked")
     @Override
     public Set<String> getJavaNames(Object obj) {
@@ -80,26 +50,6 @@ public class ZMoGeneralMapEntity extends ZMoEntity {
             return ((DBObject) obj).keySet();
         }
         return getJavaNames(obj);
-    }
-
-    @Override
-    public ZMoField getJavaField(String name) {
-        return dftfld;
-    }
-
-    @Override
-    public ZMoField javaField(String name) {
-        return dftfld;
-    }
-
-    @Override
-    public ZMoField getMongoField(String name) {
-        return dftfld;
-    }
-
-    @Override
-    public ZMoField mongoField(String name) {
-        return dftfld;
     }
 
     @Override
