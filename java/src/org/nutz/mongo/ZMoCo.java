@@ -1,10 +1,10 @@
 package org.nutz.mongo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mongodb.AggregationOutput;
 import com.mongodb.CommandResult;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBDecoderFactory;
@@ -24,55 +24,59 @@ import com.mongodb.WriteResult;
  * 
  * @author zozoh(zozohtnt@gmail.com)
  */
-public class ZMongoCollection {
+public class ZMoCo {
 
     private DBCollection dbc;
 
-    // ------------------------------------------------------------------
-    // 下面是委托方法
+    public ZMoCo(DBCollection c) {
+        this.dbc = c;
+    }
 
-    public WriteResult insert(DBObject[] arr, WriteConcern concern) {
+    public WriteResult insert(ZMoDoc[] arr, WriteConcern concern) {
         return dbc.insert(arr, concern);
     }
 
-    public WriteResult insert(DBObject[] arr, WriteConcern concern, DBEncoder encoder) {
+    public WriteResult insert(ZMoDoc[] arr, WriteConcern concern, DBEncoder encoder) {
         return dbc.insert(arr, concern, encoder);
     }
 
-    public WriteResult insert(DBObject o, WriteConcern concern) {
+    public WriteResult insert(ZMoDoc o, WriteConcern concern) {
         return dbc.insert(o, concern);
     }
 
-    public WriteResult insert(DBObject... arr) {
+    public WriteResult insert(ZMoDoc... arr) {
         return dbc.insert(arr);
     }
 
-    public WriteResult insert(WriteConcern concern, DBObject... arr) {
+    public WriteResult insert(WriteConcern concern, ZMoDoc... arr) {
         return dbc.insert(concern, arr);
     }
 
-    public WriteResult insert(List<DBObject> list) {
-        return dbc.insert(list);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public WriteResult insert(List<ZMoDoc> list) {
+        return dbc.insert((List) list);
     }
 
-    public WriteResult insert(List<DBObject> list, WriteConcern concern) {
-        return dbc.insert(list, concern);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public WriteResult insert(List<ZMoDoc> list, WriteConcern concern) {
+        return dbc.insert((List) list, concern);
     }
 
-    public WriteResult insert(List<DBObject> list, WriteConcern concern, DBEncoder encoder) {
-        return dbc.insert(list, concern, encoder);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public WriteResult insert(List<ZMoDoc> list, WriteConcern concern, DBEncoder encoder) {
+        return dbc.insert((List) list, concern, encoder);
     }
 
-    public WriteResult update(DBObject q,
-                              DBObject o,
+    public WriteResult update(ZMoDoc q,
+                              ZMoDoc o,
                               boolean upsert,
                               boolean multi,
                               WriteConcern concern) {
         return dbc.update(q, o, upsert, multi, concern);
     }
 
-    public WriteResult update(DBObject q,
-                              DBObject o,
+    public WriteResult update(ZMoDoc q,
+                              ZMoDoc o,
                               boolean upsert,
                               boolean multi,
                               WriteConcern concern,
@@ -80,61 +84,61 @@ public class ZMongoCollection {
         return dbc.update(q, o, upsert, multi, concern, encoder);
     }
 
-    public WriteResult update(DBObject q, DBObject o, boolean upsert, boolean multi) {
+    public WriteResult update(ZMoDoc q, ZMoDoc o, boolean upsert, boolean multi) {
         return dbc.update(q, o, upsert, multi);
     }
 
-    public WriteResult update(DBObject q, DBObject o) {
+    public WriteResult update(ZMoDoc q, ZMoDoc o) {
         return dbc.update(q, o);
     }
 
-    public WriteResult updateMulti(DBObject q, DBObject o) {
+    public WriteResult updateMulti(ZMoDoc q, ZMoDoc o) {
         return dbc.updateMulti(q, o);
     }
 
-    public WriteResult remove(DBObject o, WriteConcern concern) {
+    public WriteResult remove(ZMoDoc o, WriteConcern concern) {
         return dbc.remove(o, concern);
     }
 
-    public WriteResult remove(DBObject o, WriteConcern concern, DBEncoder encoder) {
+    public WriteResult remove(ZMoDoc o, WriteConcern concern, DBEncoder encoder) {
         return dbc.remove(o, concern, encoder);
     }
 
-    public WriteResult remove(DBObject o) {
+    public WriteResult remove(ZMoDoc o) {
         return dbc.remove(o);
     }
 
-    public DBObject findAndModify(DBObject query,
-                                  DBObject fields,
-                                  DBObject sort,
+    public DBObject findAndModify(ZMoDoc query,
+                                  ZMoDoc fields,
+                                  ZMoDoc sort,
                                   boolean remove,
-                                  DBObject update,
+                                  ZMoDoc update,
                                   boolean returnNew,
                                   boolean upsert) {
         return dbc.findAndModify(query, fields, sort, remove, update, returnNew, upsert);
     }
 
-    public DBObject findAndModify(DBObject query, DBObject sort, DBObject update) {
+    public DBObject findAndModify(ZMoDoc query, ZMoDoc sort, ZMoDoc update) {
         return dbc.findAndModify(query, sort, update);
     }
 
-    public DBObject findAndModify(DBObject query, DBObject update) {
+    public DBObject findAndModify(ZMoDoc query, ZMoDoc update) {
         return dbc.findAndModify(query, update);
     }
 
-    public DBObject findAndRemove(DBObject query) {
+    public DBObject findAndRemove(ZMoDoc query) {
         return dbc.findAndRemove(query);
     }
 
-    public void createIndex(DBObject keys) {
+    public void createIndex(ZMoDoc keys) {
         dbc.createIndex(keys);
     }
 
-    public void createIndex(DBObject keys, DBObject options) {
+    public void createIndex(ZMoDoc keys, ZMoDoc options) {
         dbc.createIndex(keys, options);
     }
 
-    public void createIndex(DBObject keys, DBObject options, DBEncoder encoder) {
+    public void createIndex(ZMoDoc keys, ZMoDoc options, DBEncoder encoder) {
         dbc.createIndex(keys, options, encoder);
     }
 
@@ -142,19 +146,19 @@ public class ZMongoCollection {
         dbc.ensureIndex(name);
     }
 
-    public void ensureIndex(DBObject keys) {
+    public void ensureIndex(ZMoDoc keys) {
         dbc.ensureIndex(keys);
     }
 
-    public void ensureIndex(DBObject keys, String name) {
+    public void ensureIndex(ZMoDoc keys, String name) {
         dbc.ensureIndex(keys, name);
     }
 
-    public void ensureIndex(DBObject keys, String name, boolean unique) {
+    public void ensureIndex(ZMoDoc keys, String name, boolean unique) {
         dbc.ensureIndex(keys, name, unique);
     }
 
-    public void ensureIndex(DBObject keys, DBObject optionsIN) {
+    public void ensureIndex(ZMoDoc keys, ZMoDoc optionsIN) {
         dbc.ensureIndex(keys, optionsIN);
     }
 
@@ -162,15 +166,16 @@ public class ZMongoCollection {
         dbc.resetIndexCache();
     }
 
-    public void setHintFields(List<DBObject> lst) {
-        dbc.setHintFields(lst);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void setHintFields(List<ZMoDoc> lst) {
+        dbc.setHintFields((List) lst);
     }
 
-    public DBCursor find(DBObject ref) {
+    public DBCursor find(ZMoDoc ref) {
         return dbc.find(ref);
     }
 
-    public DBCursor find(DBObject ref, DBObject keys) {
+    public DBCursor find(ZMoDoc ref, ZMoDoc keys) {
         return dbc.find(ref, keys);
     }
 
@@ -178,43 +183,43 @@ public class ZMongoCollection {
         return dbc.find();
     }
 
-    public DBObject findOne() {
-        return dbc.findOne();
+    public ZMoDoc findOne() {
+        return ZMoDoc.WRAP(dbc.findOne());
     }
 
-    public DBObject findOne(DBObject o) {
-        return dbc.findOne(o);
+    public ZMoDoc findOne(ZMoDoc o) {
+        return ZMoDoc.WRAP(dbc.findOne(o));
     }
 
-    public DBObject findOne(DBObject o, DBObject fields) {
-        return dbc.findOne(o, fields);
+    public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields) {
+        return ZMoDoc.WRAP(dbc.findOne(o, fields));
     }
 
-    public DBObject findOne(DBObject o, DBObject fields, DBObject orderBy) {
-        return dbc.findOne(o, fields, orderBy);
+    public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields, ZMoDoc orderBy) {
+        return ZMoDoc.WRAP(dbc.findOne(o, fields, orderBy));
     }
 
-    public DBObject findOne(DBObject o, DBObject fields, ReadPreference readPref) {
-        return dbc.findOne(o, fields, readPref);
+    public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields, ReadPreference readPref) {
+        return ZMoDoc.WRAP(dbc.findOne(o, fields, readPref));
     }
 
-    public DBObject findOne(DBObject o, DBObject fields, DBObject orderBy, ReadPreference readPref) {
-        return dbc.findOne(o, fields, orderBy, readPref);
+    public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields, ZMoDoc orderBy, ReadPreference readPref) {
+        return ZMoDoc.WRAP(dbc.findOne(o, fields, orderBy, readPref));
     }
 
-    public Object apply(DBObject o) {
+    public Object apply(ZMoDoc o) {
         return dbc.apply(o);
     }
 
-    public Object apply(DBObject jo, boolean ensureID) {
+    public Object apply(ZMoDoc jo, boolean ensureID) {
         return dbc.apply(jo, ensureID);
     }
 
-    public WriteResult save(DBObject jo) {
+    public WriteResult save(ZMoDoc jo) {
         return dbc.save(jo);
     }
 
-    public WriteResult save(DBObject jo, WriteConcern concern) {
+    public WriteResult save(ZMoDoc jo, WriteConcern concern) {
         return dbc.save(jo, concern);
     }
 
@@ -234,11 +239,11 @@ public class ZMongoCollection {
         return dbc.count();
     }
 
-    public long count(DBObject query) {
+    public long count(ZMoDoc query) {
         return dbc.count(query);
     }
 
-    public long count(DBObject query, ReadPreference readPrefs) {
+    public long count(ZMoDoc query, ReadPreference readPrefs) {
         return dbc.count(query, readPrefs);
     }
 
@@ -250,24 +255,24 @@ public class ZMongoCollection {
         return dbc.getCount(readPrefs);
     }
 
-    public long getCount(DBObject query) {
+    public long getCount(ZMoDoc query) {
         return dbc.getCount(query);
     }
 
-    public long getCount(DBObject query, DBObject fields) {
+    public long getCount(ZMoDoc query, ZMoDoc fields) {
         return dbc.getCount(query, fields);
     }
 
-    public long getCount(DBObject query, DBObject fields, ReadPreference readPrefs) {
+    public long getCount(ZMoDoc query, ZMoDoc fields, ReadPreference readPrefs) {
         return dbc.getCount(query, fields, readPrefs);
     }
 
-    public long getCount(DBObject query, DBObject fields, long limit, long skip) {
+    public long getCount(ZMoDoc query, ZMoDoc fields, long limit, long skip) {
         return dbc.getCount(query, fields, limit, skip);
     }
 
-    public long getCount(DBObject query,
-                         DBObject fields,
+    public long getCount(ZMoDoc query,
+                         ZMoDoc fields,
                          long limit,
                          long skip,
                          ReadPreference readPrefs) {
@@ -282,33 +287,29 @@ public class ZMongoCollection {
         return dbc.rename(newName, dropTarget);
     }
 
-    public DBObject group(DBObject key, DBObject cond, DBObject initial, String reduce) {
-        return dbc.group(key, cond, initial, reduce);
+    public ZMoDoc group(ZMoDoc key, ZMoDoc cond, ZMoDoc initial, String reduce) {
+        return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce));
     }
 
-    public DBObject group(DBObject key,
-                          DBObject cond,
-                          DBObject initial,
-                          String reduce,
-                          String finalize) {
-        return dbc.group(key, cond, initial, reduce, finalize);
+    public ZMoDoc group(ZMoDoc key, ZMoDoc cond, ZMoDoc initial, String reduce, String finalize) {
+        return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce, finalize));
     }
 
-    public DBObject group(DBObject key,
-                          DBObject cond,
-                          DBObject initial,
-                          String reduce,
-                          String finalize,
-                          ReadPreference readPrefs) {
-        return dbc.group(key, cond, initial, reduce, finalize, readPrefs);
+    public ZMoDoc group(ZMoDoc key,
+                        ZMoDoc cond,
+                        ZMoDoc initial,
+                        String reduce,
+                        String finalize,
+                        ReadPreference readPrefs) {
+        return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce, finalize, readPrefs));
     }
 
-    public DBObject group(GroupCommand cmd) {
-        return dbc.group(cmd);
+    public ZMoDoc group(GroupCommand cmd) {
+        return ZMoDoc.WRAP(dbc.group(cmd));
     }
 
-    public DBObject group(GroupCommand cmd, ReadPreference readPrefs) {
-        return dbc.group(cmd, readPrefs);
+    public ZMoDoc group(GroupCommand cmd, ReadPreference readPrefs) {
+        return ZMoDoc.WRAP(dbc.group(cmd, readPrefs));
     }
 
     public List<?> distinct(String key) {
@@ -319,15 +320,15 @@ public class ZMongoCollection {
         return dbc.distinct(key, readPrefs);
     }
 
-    public List<?> distinct(String key, DBObject query) {
+    public List<?> distinct(String key, ZMoDoc query) {
         return dbc.distinct(key, query);
     }
 
-    public List<?> distinct(String key, DBObject query, ReadPreference readPrefs) {
+    public List<?> distinct(String key, ZMoDoc query, ReadPreference readPrefs) {
         return dbc.distinct(key, query, readPrefs);
     }
 
-    public MapReduceOutput mapReduce(String map, String reduce, String outputTarget, DBObject query) {
+    public MapReduceOutput mapReduce(String map, String reduce, String outputTarget, ZMoDoc query) {
         return dbc.mapReduce(map, reduce, outputTarget, query);
     }
 
@@ -335,7 +336,7 @@ public class ZMongoCollection {
                                      String reduce,
                                      String outputTarget,
                                      OutputType outputType,
-                                     DBObject query) {
+                                     ZMoDoc query) {
         return dbc.mapReduce(map, reduce, outputTarget, outputType, query);
     }
 
@@ -343,7 +344,7 @@ public class ZMongoCollection {
                                      String reduce,
                                      String outputTarget,
                                      OutputType outputType,
-                                     DBObject query,
+                                     ZMoDoc query,
                                      ReadPreference readPrefs) {
         return dbc.mapReduce(map, reduce, outputTarget, outputType, query, readPrefs);
     }
@@ -352,19 +353,23 @@ public class ZMongoCollection {
         return dbc.mapReduce(command);
     }
 
-    public MapReduceOutput mapReduce(DBObject command) {
+    public MapReduceOutput mapReduce(ZMoDoc command) {
         return dbc.mapReduce(command);
     }
 
-    public AggregationOutput aggregate(DBObject firstOp, DBObject... additionalOps) {
+    public AggregationOutput aggregate(ZMoDoc firstOp, ZMoDoc... additionalOps) {
         return dbc.aggregate(firstOp, additionalOps);
     }
 
-    public List<DBObject> getIndexInfo() {
-        return dbc.getIndexInfo();
+    public List<ZMoDoc> getIndexInfo() {
+        List<DBObject> dbobjs = dbc.getIndexInfo();
+        List<ZMoDoc> list = new ArrayList<ZMoDoc>(dbobjs.size());
+        for (DBObject dbojb : dbobjs)
+            list.add(ZMoDoc.WRAP(dbojb));
+        return list;
     }
 
-    public void dropIndex(DBObject keys) {
+    public void dropIndex(ZMoDoc keys) {
         dbc.dropIndex(keys);
     }
 
@@ -380,8 +385,8 @@ public class ZMongoCollection {
         return dbc.isCapped();
     }
 
-    public DBCollection getCollection(String n) {
-        return dbc.getCollection(n);
+    public ZMoCo getCollection(String n) {
+        return new ZMoCo(dbc.getCollection(n));
     }
 
     public String getName() {
@@ -392,8 +397,8 @@ public class ZMongoCollection {
         return dbc.getFullName();
     }
 
-    public DB getDB() {
-        return dbc.getDB();
+    public ZMoDB getDB() {
+        return new ZMoDB(dbc.getDB());
     }
 
     public int hashCode() {
@@ -466,10 +471,6 @@ public class ZMongoCollection {
 
     public DBEncoderFactory getDBEncoderFactory() {
         return dbc.getDBEncoderFactory();
-    }
-
-    public ZMongoCollection(DBCollection c) {
-        this.dbc = c;
     }
 
 }

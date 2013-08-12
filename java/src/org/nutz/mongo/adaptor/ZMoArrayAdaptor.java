@@ -7,7 +7,6 @@ import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
 import org.nutz.mongo.ZMo;
 import org.nutz.mongo.ZMoAdaptor;
-import org.nutz.mongo.ZMoDoc;
 import org.nutz.mongo.entity.ZMoEntity;
 import org.nutz.mongo.entity.ZMoField;
 
@@ -30,9 +29,10 @@ public class ZMoArrayAdaptor implements ZMoAdaptor {
             Object arr = null;
             if (fld == null) {
                 arr = Array.newInstance(Object.class, list.size());
-            } else {
+            }
+            // 让 fld 的 Borning 来创建
+            else {
                 arr = fld.getBorning().born(list.size());
-                en = ZMo.me().getEntity(fld.getEleType());
             }
 
             // 开始循环数组
@@ -41,18 +41,23 @@ public class ZMoArrayAdaptor implements ZMoAdaptor {
             while (it.hasNext()) {
                 Object eleMongo = it.next();
                 Object elePojo;
-                // 确保已经获得过实体过了，这里这个代码考虑到效率
-                // 就是说一个集合或者数组，映射方式总是一样的
-                // 如果有不一样的，那么就完蛋了
-                if (null == en) {
-                    en = ZMo.me().getEntity(eleMongo.getClass());
-                }
+
                 // 如果元素是个 Mongo 类型
                 if (eleMongo instanceof DBObject) {
-                    ZMoDoc doc = ZMoDoc.WRAP((DBObject) eleMongo);
-                    elePojo = ZMo.me().fromDoc(doc, en);
+                    // 确保已经获得过实体过了，这里这个代码考虑到效率
+                    // 就是说一个集合或者数组，映射方式总是一样的
+                    // 如果有不一样的，那么就完蛋了
+                    if (null == en) {
+                        en = ZMo.me().getEntity(eleMongo.getClass());
+                    }
+                    // 转换
+                    elePojo = ZMo.me().fromDoc((DBObject) eleMongo, en);
                 }
-                // 其他类型用 smart 转一下咯
+                // 如果 fld 有 adaptor
+                else if (null != fld && null != fld.getEleAdaptor()) {
+                    elePojo = fld.getEleAdaptor().toJava(null, eleMongo);
+                }
+                // 其他情况，直接上 smart 咯
                 else {
                     elePojo = ZMoAs.smart().toJava(null, eleMongo);
                 }

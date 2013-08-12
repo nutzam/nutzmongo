@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bson.types.ObjectId;
 import org.nutz.lang.Lang;
@@ -92,6 +93,19 @@ public class ZMo {
     }
 
     /**
+     * 根据一个 JSON 字符串生成的 Map 对象来生成 ZMoDoc 对象
+     * 
+     * @param json
+     *            JSON 字符串，可以省略前后的大括号，即，可以是 "x:100,y:'23'"
+     * @param args
+     *            如果参数 json 为一个格式化字符串模板，那么这里给出参数
+     * @return 文档对象
+     */
+    public ZMoDoc toDoc(String json, Object... args) {
+        return toDoc(Lang.mapf(json, args));
+    }
+
+    /**
      * 将任何一个对象转换成 ZMoDoc，并强制指定映射关系
      * 
      * @param obj
@@ -102,26 +116,27 @@ public class ZMo {
      */
     public ZMoDoc toDoc(Object obj, ZMoEntity en) {
         ZMoDoc doc = ZMoDoc.NEW();
-        Set<String> keys = en.getJavaNames(obj);
-        for (String key : keys) {
-            Object v = en.getValue(obj, key);
+        Set<String> javaNames = en.getJavaNames(obj);
+        for (String javaName : javaNames) {
+            Object v = en.getValue(obj, javaName);
             // 空值
             if (null == v) {
-                doc.put(key, v);
+                doc.put(javaName, v);
             }
             // _id
-            else if ("_id".equals(key)) {
+            else if ("_id".equals(javaName)) {
                 if (v instanceof ObjectId) {
-                    doc.put(key, v);
+                    doc.put(javaName, v);
                 } else {
-                    doc.put(key, new ObjectId(v.toString()));
+                    doc.put(javaName, new ObjectId(v.toString()));
                 }
             }
             // 其他值适配
             else {
-                ZMoField fld = en.javaField(key);
+                ZMoField fld = en.javaField(javaName);
+                String mongoName = en.getMongoNameFromJava(javaName);
                 Object dbv = fld.getAdaptor().toMongo(fld, v);
-                doc.put(key, dbv);
+                doc.put(mongoName, dbv);
             }
         }
         return doc;
@@ -134,7 +149,7 @@ public class ZMo {
      *            Java 对象数组
      * @return 文档数组
      */
-    public DBObject[] toDocArray(Object[] objs) {
+    public ZMoDoc[] toDocArray(Object[] objs) {
         return toDocArray(null, objs);
     }
 
@@ -145,7 +160,7 @@ public class ZMo {
      *            Java 对象数组
      * @return 文档数组
      */
-    public DBObject[] toDocArray(List<?> objs) {
+    public ZMoDoc[] toDocArray(List<?> objs) {
         return toDocArray(null, objs);
     }
 
@@ -158,8 +173,10 @@ public class ZMo {
      *            Java 对象数组
      * @return 文档数组
      */
-    public DBObject[] toDocArray(ZMoEntity en, Object[] objs) {
-        DBObject[] docs = new DBObject[objs.length];
+    public ZMoDoc[] toDocArray(ZMoEntity en, Object[] objs) {
+        ZMoDoc[] docs = new ZMoDoc[objs.length];
+        if (objs.length > 0)
+            en = this.getEntity(objs[0].getClass());
         int i = 0;
         for (Object obj : objs)
             docs[i++] = toDoc(obj, en);
@@ -175,8 +192,10 @@ public class ZMo {
      *            Java 对象数组
      * @return 文档数组
      */
-    public DBObject[] toDocArray(ZMoEntity en, List<?> objs) {
-        DBObject[] docs = new DBObject[objs.size()];
+    public ZMoDoc[] toDocArray(ZMoEntity en, List<?> objs) {
+        ZMoDoc[] docs = new ZMoDoc[objs.size()];
+        if (!objs.isEmpty())
+            en = this.getEntity(objs.get(0).getClass());
         int i = 0;
         for (Object obj : objs)
             docs[i++] = toDoc(obj, en);
@@ -190,7 +209,7 @@ public class ZMo {
      *            Java 对象数组
      * @return 文档列表
      */
-    public List<DBObject> toDocList(Object[] objs) {
+    public List<ZMoDoc> toDocList(Object[] objs) {
         return toDocList(null, objs);
     }
 
@@ -201,7 +220,7 @@ public class ZMo {
      *            Java 对象数组
      * @return 文档列表
      */
-    public List<DBObject> toDocList(List<?> objs) {
+    public List<ZMoDoc> toDocList(List<?> objs) {
         return toDocList(null, objs);
     }
 
@@ -214,8 +233,8 @@ public class ZMo {
      *            Java 对象数组
      * @return 文档列表
      */
-    public List<DBObject> toDocList(ZMoEntity en, Object[] objs) {
-        List<DBObject> docs = new ArrayList<DBObject>(objs.length);
+    public List<ZMoDoc> toDocList(ZMoEntity en, Object[] objs) {
+        List<ZMoDoc> docs = new ArrayList<ZMoDoc>(objs.length);
         for (Object obj : objs)
             docs.add(toDoc(obj, null));
         return docs;
@@ -230,8 +249,8 @@ public class ZMo {
      *            Java 对象数组
      * @return 文档列表
      */
-    public List<DBObject> toDocList(ZMoEntity en, List<?> objs) {
-        List<DBObject> docs = new ArrayList<DBObject>(objs.size());
+    public List<ZMoDoc> toDocList(ZMoEntity en, List<?> objs) {
+        List<ZMoDoc> docs = new ArrayList<ZMoDoc>(objs.size());
         for (Object obj : objs)
             docs.add(toDoc(obj, null));
         return docs;
@@ -241,37 +260,49 @@ public class ZMo {
      * 将任何一个文档对象转换成 ZMoDoc，<br>
      * 根据传入的映射关系来决定是变成 Pojo还是Map
      * 
-     * @param doc
+     * @param dbobj
      *            文档对象
      * @param en
      *            映射关系，如果为 null，则变成普通 Map
      * @return 普通Java对象
      */
-    public Object fromDoc(ZMoDoc doc, ZMoEntity en) {
+    public Object fromDoc(DBObject dbobj, ZMoEntity en) {
+        ZMoDoc doc = ZMoDoc.WRAP(dbobj);
         if (null == en) {
             en = holder.get(DFT_MAP_KEY);
         }
         Object obj = en.born();
         Set<String> keys = en.getMongoNames(doc);
         for (String key : keys) {
-            Object v = en.getValue(obj, key);
-            ZMoField fld = en.mongoField(key);
-            Object pojov;
-            // 空值
-            if (null == v) {
-                pojov = null;
+            try {
+                // 获得映射关系
+                ZMoField fld = en.mongoField(key);
+                String javaName = en.getJavaNameFromMongo(key);
+                String mongoName = en.getMongoNameFromJava(javaName);
+
+                // 获取值
+                Object v = doc.get(mongoName);
+                Object pojov;
+
+                // 空值
+                if (null == v) {
+                    pojov = null;
+                }
+                // _id
+                else if ("_id".equals(key)) {
+                    pojov = ZMoAs.id().toJava(fld, v);
+                }
+                // 其他值适配
+                else {
+                    pojov = fld.getAdaptor().toJava(fld, v);
+                }
+                // 设置值
+
+                en.setValue(obj, javaName, pojov);
             }
-            // _id
-            else if ("_id".equals(key)) {
-                pojov = ZMoAs.id().toJava(fld, v);
+            catch (Exception e) {
+                throw Lang.wrapThrow(e, "fail to set field %s#%s", en.getType(), key);
             }
-            // 其他值适配
-            else {
-                pojov = fld.getAdaptor().toJava(fld, v);
-            }
-            // 设置值
-            String javaName = en.getJavaNameFromMongo(key);
-            en.setValue(obj, javaName, pojov);
         }
         return obj;
     }
@@ -281,15 +312,15 @@ public class ZMo {
      * 
      * @param <T>
      *            对象的类型参数
-     * @param doc
+     * @param dbobj
      *            文档对象
      * @param classOfT
      *            对象类型，根据这个类型可以自动获得映射关系
      * @return 特定的Java对象
      */
     @SuppressWarnings("unchecked")
-    public <T> T fromDocToObj(ZMoDoc doc, Class<T> classOfT) {
-        return (T) (fromDoc(doc, getEntity(classOfT)));
+    public <T> T fromDocToObj(DBObject dbobj, Class<T> classOfT) {
+        return (T) (fromDoc(dbobj, getEntity(classOfT)));
     }
 
     /**
@@ -297,15 +328,15 @@ public class ZMo {
      * 
      * @param <T>
      *            对象的类型参数
-     * @param doc
+     * @param dbobj
      *            文档对象
      * @param en
      *            映射关系，如果为 null，则直接变成 Map
      * @return Map 对象
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> fromDocToMap(ZMoDoc doc) {
-        return (Map<String, Object>) fromDoc(doc, null);
+    public Map<String, Object> fromDocToMap(DBObject dbobj) {
+        return (Map<String, Object>) fromDoc(dbobj, null);
     }
 
     /**
@@ -373,6 +404,25 @@ public class ZMo {
     private ZMo() {
         holder = new ZMoEntityHolder();
         maker = new ZMoEntityMaker();
+    }
+
+    //
+    // 下面是一下常用的帮助函数
+    //
+
+    private static final Pattern OBJ_ID = Pattern.compile("^[0-9a-f]{24}$");
+
+    /**
+     * 判断给定的字符串是否是 MongoDB 默认的 ID 格式
+     * 
+     * @param ID
+     *            给定 ID
+     * @return true or false
+     */
+    public static boolean isObjectId(String ID) {
+        if (null == ID || ID.length() != 24)
+            return false;
+        return OBJ_ID.matcher(ID).find();
     }
 
 }

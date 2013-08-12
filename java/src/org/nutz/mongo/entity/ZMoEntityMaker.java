@@ -59,7 +59,7 @@ public class ZMoEntityMaker {
                 ZMoGeneralMapEntity en = new ZMoGeneralMapEntity();
                 // 如果传入的类不是抽象类，那么必然是一个可实例化的 Map
                 if (!Modifier.isAbstract(((Class<?>) obj).getModifiers())) {
-                    en.setJavaType(mi.getType());
+                    en.setType(mi.getType());
                     en.setBorning(mi.getBorning());
                 }
                 return en;
@@ -85,8 +85,8 @@ public class ZMoEntityMaker {
             throw Lang.makeThrow("!! %s is NOT a kind of POJO", pojoType);
         }
         // 开始创建实体
-        ZMoEntity en = new ZMoEntity();
-        en.setJavaType(pojoType);
+        ZMoEntity en = new ZMoEntity().forPojo();
+        en.setType(pojoType);
         en.setBorning(mi.getBorning());
 
         // 构建映射字段
@@ -119,7 +119,7 @@ public class ZMoEntityMaker {
             // 处理字段类型相关的适配方法
             mof.setType(fld.getType());
             Mirror<?> fmi = Mirror.me(fld.getType());
-            mof.setAdaptor(ZMoAs.get(fmi.getType()));
+            mof.setAdaptor(ZMoAs.get(fmi));
             mof.setEjecting(mi.getEjecting(fld.getName()));
             mof.setInjecting(mi.getInjecting(fld.getName()));
 
@@ -205,11 +205,11 @@ public class ZMoEntityMaker {
             en = new ZMoEntity().forMap();
             // 设置实体的 Java 实现类类型
             if (null == mi)
-                en.setJavaType(HashMap.class);
+                en.setType(HashMap.class);
             else
-                en.setJavaType(mi.getType());
+                en.setType(mi.getType());
             // 设置实体需要其他字段
-            en.setBorning(Mirror.me(en.getJavaType()).getBorning());
+            en.setBorning(en.getMirror().getBorning());
 
             en.setDefaultField(new ZMoGeneralMapField());
         }

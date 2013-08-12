@@ -11,11 +11,11 @@ import com.mongodb.DB;
  * 
  * @author zozoh(zozohtnt@gmail.com)
  */
-public class ZMongoDB {
+public class ZMoDB {
 
     private DB db;
 
-    public ZMongoDB(DB db) {
+    public ZMoDB(DB db) {
         this.db = db;
     }
 
@@ -26,10 +26,10 @@ public class ZMongoDB {
      *            集合名称
      * @return 集合薄封装
      */
-    public ZMongoCollection c(String name) {
+    public ZMoCo c(String name) {
         if (!db.collectionExists(name))
             throw Lang.makeThrow("Colection noexitst: %s.%s", db.getName(), name);
-        return new ZMongoCollection(db.getCollection(name));
+        return new ZMoCo(db.getCollection(name));
     }
 
     /**
@@ -41,7 +41,7 @@ public class ZMongoDB {
      *            true 如果存在就清除
      * @return 集合薄封装
      */
-    public ZMongoCollection cc(String name, boolean dropIfExists) {
+    public ZMoCo cc(String name, boolean dropIfExists) {
         // 不存在则创建
         if (!db.collectionExists(name)) {
             return createCollection(name, null);
@@ -52,7 +52,7 @@ public class ZMongoDB {
             return createCollection(name, null);
         }
         // 已经存在
-        return new ZMongoCollection(db.getCollection(name));
+        return new ZMoCo(db.getCollection(name));
     }
 
     /**
@@ -64,17 +64,27 @@ public class ZMongoDB {
      *            集合配置信息
      * @return 集合薄封装
      */
-    public ZMongoCollection createCollection(String name, ZMoDoc options) {
+    public ZMoCo createCollection(String name, ZMoDoc options) {
         if (db.collectionExists(name)) {
             throw Lang.makeThrow("Colection exitst: %s.%s", db.getName(), name);
         }
 
         // 创建默认配置信息
         if (null == options) {
-            options = ZMoDoc.NEW("capped:true, size:-1, max:-1");
+            options = ZMoDoc.NEW("capped:false");
         }
 
-        return new ZMongoCollection(db.createCollection(name, options));
+        return new ZMoCo(db.createCollection(name, options));
+    }
+
+    /**
+     * 清除数据库的游标
+     * 
+     * @param force
+     *            是否强制
+     */
+    public void cleanCursors(boolean force) {
+        db.cleanCursors(force);
     }
 
     /**

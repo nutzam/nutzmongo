@@ -13,7 +13,7 @@ public class ZMoGeneralMapEntity extends ZMoEntity {
     public ZMoGeneralMapEntity() {
         super();
         setDefaultField(new ZMoGeneralMapField());
-        setJavaType(HashMap.class);
+        setType(HashMap.class);
         setBorning(Mirror.me(HashMap.class).getBorning());
     }
 

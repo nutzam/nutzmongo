@@ -27,10 +27,6 @@ public class ZMoAs {
 
     private static ZMoAdaptor _smart = new ZMoSmartAdaptor();
 
-    public static ZMoAdaptor get(Class<?> type) {
-        return get(Mirror.me(type));
-    }
-
     public static ZMoAdaptor get(Mirror<?> mi) {
         // 简单类型
         if (mi.isSimple()) {

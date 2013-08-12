@@ -107,12 +107,12 @@ public class ZMongo {
      *            数据库名称
      * @return 数据库封装对象
      */
-    public ZMongoDB db(String dbname) {
+    public ZMoDB db(String dbname) {
         DB db = moclient.getDB(dbname);
         if (!Strings.isBlank(userName)) {
             db.authenticate(userName, password);
         }
-        return new ZMongoDB(db);
+        return new ZMoDB(db);
     }
 
     /**

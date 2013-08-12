@@ -18,30 +18,24 @@ import com.mongodb.DBObject;
  */
 public class ZMoDoc implements DBObject {
 
-    private DBObject dbobj;
+    private DBObject DBobj;
 
     public static ZMoDoc NEW() {
-        ZMoDoc doc = new ZMoDoc();
-        doc.dbobj = new BasicDBObject();
-        return doc;
+        return new ZMoDoc().setDBobj(new BasicDBObject());
     }
 
     public static ZMoDoc NEW(int size) {
-        ZMoDoc doc = new ZMoDoc();
-        doc.dbobj = new BasicDBObject(size);
-        return doc;
+        return NEW().setDBobj(new BasicDBObject(size));
     }
 
     public static ZMoDoc NEW(Map<String, Object> m) {
-        ZMoDoc doc = new ZMoDoc();
+        ZMoDoc doc = NEW();
         doc.putAll(m);
         return doc;
     }
 
     public static ZMoDoc NEW(String key, Object v) {
-        ZMoDoc doc = new ZMoDoc();
-        doc.put(key, v);
-        return doc;
+        return NEW().set(key, v);
     }
 
     public static ZMoDoc NEW(String json) {
@@ -51,9 +45,7 @@ public class ZMoDoc implements DBObject {
     public static ZMoDoc WRAP(DBObject obj) {
         if (obj instanceof ZMoDoc)
             return (ZMoDoc) obj;
-        ZMoDoc doc = new ZMoDoc();
-        doc.dbobj = obj;
-        return doc;
+        return new ZMoDoc().setDBobj(obj);
     }
 
     /**
@@ -62,7 +54,21 @@ public class ZMoDoc implements DBObject {
      * @return 自身以便链式赋值
      */
     public ZMoDoc genID() {
-        dbobj.put("_id", new ObjectId());
+        DBobj.put("_id", new ObjectId());
+        return this;
+    }
+
+    public DBObject getDBobj() {
+        return DBobj;
+    }
+
+    public ZMoDoc setDBobj(DBObject dBobj) {
+        DBobj = dBobj;
+        return this;
+    }
+
+    public ZMoDoc set(String key, Object v) {
+        put(key, v);
         return this;
     }
 
@@ -75,31 +81,34 @@ public class ZMoDoc implements DBObject {
     public Object put(String key, Object v) {
         // 检查一下错误，防止 _id 输入错误
         if ("_id".equals(key)) {
-            String msg = "doc._id should be ObjectID(), but '%s'";
             // 空值
             if (v == null) {
-                throw Lang.makeThrow(msg, "null");
+                DBobj.removeField("_id");
             }
             // 错误类型
             else if (!(v instanceof ObjectId)) {
-                throw Lang.makeThrow(msg, v.getClass().getName());
+                throw Lang.makeThrow("doc._id should be ObjectID(), but '%s'", v.getClass()
+                                                                                .getName());
             }
         }
-        // 如果 v 是 Map 或者 Collection 或者 Array 统统禁止
+        // 确定值不是空
         else if (null != v) {
-            if (v instanceof Map || v instanceof Collection || v.getClass().isArray()) {
+            // 如果是 DBObject 就允许
+            if (v instanceof DBObject) {}
+            // 如果 v 是 Map 或者 Collection 或者 Array 统统禁止
+            else if (v instanceof Map || v instanceof Collection || v.getClass().isArray()) {
                 throw Lang.makeThrow("ZMoDoc can not put : %s", v.getClass().getName());
             }
         }
-        return dbobj.put(key, v);
+        return DBobj.put(key, v);
     }
 
     public void markAsPartialObject() {
-        dbobj.markAsPartialObject();
+        DBobj.markAsPartialObject();
     }
 
     public boolean isPartialObject() {
-        return dbobj.isPartialObject();
+        return DBobj.isPartialObject();
     }
 
     public void putAll(BSONObject o) {
@@ -117,28 +126,28 @@ public class ZMoDoc implements DBObject {
     }
 
     public Object get(String key) {
-        return dbobj.get(key);
+        return DBobj.get(key);
     }
 
     @SuppressWarnings("rawtypes")
     public Map toMap() {
-        return dbobj.toMap();
+        return DBobj.toMap();
     }
 
     public Object removeField(String key) {
-        return dbobj.removeField(key);
+        return DBobj.removeField(key);
     }
 
     public boolean containsKey(String s) {
-        return dbobj.containsField(s);
+        return DBobj.containsField(s);
     }
 
     public boolean containsField(String s) {
-        return dbobj.containsField(s);
+        return DBobj.containsField(s);
     }
 
     public Set<String> keySet() {
-        return dbobj.keySet();
+        return DBobj.keySet();
     }
 
 }

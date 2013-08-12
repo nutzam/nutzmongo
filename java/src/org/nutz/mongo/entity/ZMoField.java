@@ -1,9 +1,11 @@
 package org.nutz.mongo.entity;
 
+import org.nutz.lang.Mirror;
 import org.nutz.lang.born.Borning;
 import org.nutz.lang.eject.Ejecting;
 import org.nutz.lang.inject.Injecting;
 import org.nutz.mongo.ZMoAdaptor;
+import org.nutz.mongo.adaptor.ZMoAs;
 
 /**
  * 封装了一个 Java 对象字段映射以及存取值操作
@@ -23,10 +25,19 @@ public class ZMoField {
      */
     private Class<?> type;
 
+    private Mirror<?> mirror;
+
     /**
      * 元素类型，仅为数组或者容器使用
      */
     private Class<?> eleType;
+
+    private Mirror<?> eleMirror;
+
+    /**
+     * 元素适配器，仅为数组或者容器使用
+     */
+    private ZMoAdaptor eleAdaptor;
 
     /**
      * 字段值的创建方式，通常是针对容器类或者POJO类
@@ -100,6 +111,11 @@ public class ZMoField {
 
     public void setType(Class<?> type) {
         this.type = type;
+        this.mirror = Mirror.me(type);
+    }
+
+    public Mirror<?> getMirror() {
+        return mirror;
     }
 
     public Class<?> getEleType() {
@@ -108,6 +124,20 @@ public class ZMoField {
 
     public void setEleType(Class<?> eleType) {
         this.eleType = eleType;
+        this.eleMirror = Mirror.me(eleType);
+        this.eleAdaptor = ZMoAs.get(eleMirror);
+    }
+
+    public Mirror<?> getEleMirror() {
+        return eleMirror;
+    }
+
+    public ZMoAdaptor getEleAdaptor() {
+        return eleAdaptor;
+    }
+
+    public void setEleAdaptor(ZMoAdaptor eleAdaptor) {
+        this.eleAdaptor = eleAdaptor;
     }
 
     public ZMoEntity getParent() {

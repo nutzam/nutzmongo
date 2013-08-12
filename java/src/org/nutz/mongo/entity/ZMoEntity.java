@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nutz.lang.Lang;
+import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 import org.nutz.lang.born.Borning;
 
@@ -15,19 +16,21 @@ import org.nutz.lang.born.Borning;
  */
 public class ZMoEntity {
 
-    enum Type {
+    enum Mode {
         MAP, POJO
     }
 
     /**
      * 指定了这个映射是 Map 还是 Pojo
      */
-    private Type type;
+    private Mode mode;
 
     /**
      * 对应的 Java 类型，如果是 Map 则表示 Map 的实现类
      */
-    private Class<?> javaType;
+    private Class<?> type;
+
+    private Mirror<?> mirror;
 
     /**
      * 保存了对象的实例生成方法，以便能较快速的生成对象
@@ -60,30 +63,35 @@ public class ZMoEntity {
     }
 
     public ZMoEntity forMap() {
-        type = Type.MAP;
+        mode = Mode.MAP;
         return this;
     }
 
     public ZMoEntity forPojo() {
-        type = Type.POJO;
+        mode = Mode.POJO;
         return this;
     }
 
     public boolean isForMap() {
-        return Type.MAP == type;
+        return Mode.MAP == mode;
     }
 
     public boolean isForPojo() {
-        return Type.POJO == type;
+        return Mode.POJO == mode;
     }
 
-    public Class<?> getJavaType() {
-        return javaType;
+    public Class<?> getType() {
+        return type;
     }
 
-    public ZMoEntity setJavaType(Class<?> javaType) {
-        this.javaType = javaType;
+    public ZMoEntity setType(Class<?> type) {
+        this.type = type;
+        this.mirror = Mirror.me(type);
         return this;
+    }
+
+    public Mirror<?> getMirror() {
+        return mirror;
     }
 
     public Object born(Object... args) {
@@ -142,7 +150,7 @@ public class ZMoEntity {
     public ZMoField javaField(String name) {
         ZMoField fld = getJavaField(name);
         if (null == fld) {
-            throw Lang.makeThrow("no such field! %s->%s", javaType, name);
+            throw Lang.makeThrow("no such field! %s->%s", type, name);
         }
         return fld;
     }
@@ -170,7 +178,7 @@ public class ZMoEntity {
     public ZMoField mongoField(String name) {
         ZMoField fld = getMongoField(name);
         if (null == fld) {
-            throw Lang.makeThrow("no such field! %s->%s", javaType, name);
+            throw Lang.makeThrow("no such field! %s->%s", type, name);
         }
         return fld;
     }
@@ -204,9 +212,9 @@ public class ZMoEntity {
 
     public ZMoEntity clone() {
         ZMoEntity en = new ZMoEntity();
-        en.setJavaType(javaType);
+        en.setType(type);
         en.setBorning(borning);
-        en.type = this.type;
+        en.mode = this.mode;
         for (Map.Entry<String, ZMoField> fld : byJava.entrySet()) {
             ZMoField f2 = fld.getValue().clone();
             f2.setParent(en);
