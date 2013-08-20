@@ -23,7 +23,11 @@ public class ZMongo {
     }
 
     public static ZMongo me(String host) {
-        return me(null, null, host, ServerAddress.defaultPort());
+        return me(host, ServerAddress.defaultPort());
+    }
+
+    public static ZMongo me(String host, int port) {
+        return me(null, null, host, port);
     }
 
     public static ZMongo me(String userName, String password, String host) {

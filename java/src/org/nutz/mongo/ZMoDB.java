@@ -56,6 +56,17 @@ public class ZMoDB {
     }
 
     /**
+     * 是否存在某个集合
+     * 
+     * @param name
+     *            集合名
+     * @return 是否存在
+     */
+    public boolean cExists(String name) {
+        return db.collectionExists(name);
+    }
+
+    /**
      * 创建一个集合
      * 
      * @param name
@@ -90,7 +101,7 @@ public class ZMoDB {
     /**
      * @return 当前数据库所有可用集合名称
      */
-    public Set<String> cnames() {
+    public Set<String> cNames() {
         return db.getCollectionNames();
     }
 

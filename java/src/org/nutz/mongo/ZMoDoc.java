@@ -42,6 +42,10 @@ public class ZMoDoc implements DBObject {
         return NEW(Lang.map(json));
     }
 
+    public static ZMoDoc NEWf(String jsonf, Object... args) {
+        return NEW(Lang.mapf(jsonf, args));
+    }
+
     public static ZMoDoc WRAP(DBObject obj) {
         if (obj instanceof ZMoDoc)
             return (ZMoDoc) obj;
@@ -55,6 +59,14 @@ public class ZMoDoc implements DBObject {
      */
     public ZMoDoc genID() {
         DBobj.put("_id", new ObjectId());
+        return this;
+    }
+
+    /**
+     * 删除自身的 _id 字段，以便作为一个新对象插入到数据库中
+     */
+    public ZMoDoc asNew() {
+        DBobj.removeField("_id");
         return this;
     }
 
