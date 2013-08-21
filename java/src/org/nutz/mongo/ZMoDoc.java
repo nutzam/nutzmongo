@@ -47,6 +47,8 @@ public class ZMoDoc implements DBObject {
     }
 
     public static ZMoDoc WRAP(DBObject obj) {
+        if (null == obj)
+            return null;
         if (obj instanceof ZMoDoc)
             return (ZMoDoc) obj;
         return new ZMoDoc().setDBobj(obj);
