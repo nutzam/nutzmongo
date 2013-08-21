@@ -119,22 +119,22 @@ public class ZMo {
         Set<String> javaNames = en.getJavaNames(obj);
         for (String javaName : javaNames) {
             Object v = en.getValue(obj, javaName);
+            ZMoField fld = en.javaField(javaName);
+            String mongoName = en.getMongoNameFromJava(javaName);
             // 空值
             if (null == v) {
-                doc.put(javaName, v);
+                doc.put(mongoName, v);
             }
             // _id
-            else if ("_id".equals(javaName)) {
+            else if ("_id".equals(mongoName)) {
                 if (v instanceof ObjectId) {
-                    doc.put(javaName, v);
+                    doc.put(mongoName, v);
                 } else {
-                    doc.put(javaName, new ObjectId(v.toString()));
+                    doc.put(mongoName, new ObjectId(v.toString()));
                 }
             }
             // 其他值适配
             else {
-                ZMoField fld = en.javaField(javaName);
-                String mongoName = en.getMongoNameFromJava(javaName);
                 Object dbv = fld.getAdaptor().toMongo(fld, v);
                 doc.put(mongoName, dbv);
             }
