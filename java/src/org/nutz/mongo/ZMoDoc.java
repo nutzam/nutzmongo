@@ -13,6 +13,8 @@ import org.bson.types.ObjectId;
 import org.nutz.castor.Castors;
 import org.nutz.lang.Each;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Strings;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -175,6 +177,28 @@ public class ZMoDoc implements DBObject {
     public Date getTime(String key, Date dft) {
         Object v = get(key);
         return null == v ? dft : Castors.me().castTo(v, Date.class);
+    }
+
+    public <T extends Enum<?>> T getEnum(String key, Class<T> classOfEnum) {
+        String s = getString(key);
+        if (Strings.isBlank(s))
+            return null;
+        return Castors.me().castTo(s, classOfEnum);
+    }
+
+    public boolean isEnum(String key, Enum<?>... eus) {
+        if (null == eus || eus.length == 0)
+            return false;
+        try {
+            Enum<?> v = getEnum(key, eus[0].getClass());
+            for (Enum<?> eu : eus)
+                if (!v.equals(eu))
+                    return false;
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
     public <T> T getAs(String key, Class<T> classOfT) {
