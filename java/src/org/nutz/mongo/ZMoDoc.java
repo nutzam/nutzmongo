@@ -13,6 +13,7 @@ import org.bson.types.ObjectId;
 import org.nutz.castor.Castors;
 import org.nutz.lang.Each;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 
 import com.mongodb.BasicDBObject;
@@ -292,8 +293,15 @@ public class ZMoDoc implements DBObject {
             // 如果是 DBObject 就允许
             if (v instanceof DBObject) {}
             // 如果 v 是 Map 或者 Collection 或者 Array 统统禁止
-            else if (v instanceof Map || v instanceof Collection || v.getClass().isArray()) {
+            else if (v instanceof Map || v instanceof Collection) {
                 throw Lang.makeThrow("ZMoDoc can not put : %s", v.getClass().getName());
+            }
+            // 如果是 Array 则判断是否是原生的
+            else if (v.getClass().isArray()) {
+                Mirror<?> mi = Mirror.me(v.getClass().getComponentType());
+                if (!mi.isSimple()) {
+                    throw Lang.makeThrow("ZMoDoc can not put : %s", v.getClass().getName());
+                }
             }
         }
         return DBobj.put(key, v);
