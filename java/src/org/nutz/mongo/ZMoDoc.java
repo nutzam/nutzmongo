@@ -42,7 +42,7 @@ public class ZMoDoc implements DBObject {
     }
 
     public static ZMoDoc NEW(String key, Object v) {
-        return NEW().putValue(key, v);
+        return NEW().putv(key, v);
     }
 
     public static ZMoDoc NEW(String json) {
@@ -88,7 +88,7 @@ public class ZMoDoc implements DBObject {
         return this;
     }
 
-    public ZMoDoc putValue(String key, Object v) {
+    public ZMoDoc putv(String key, Object v) {
         put(key, v);
         return this;
     }
