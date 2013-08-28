@@ -94,6 +94,11 @@ public class ZMoDoc implements DBObject {
         return this;
     }
 
+    public <T> ZMoDoc in(String key, T[] vs) {
+        put(key, NEW("$in", vs));
+        return this;
+    }
+
     // ------------------------------------------------------------
     // 下面是一些便捷的方法用来设置常用的值
     /**
@@ -352,6 +357,14 @@ public class ZMoDoc implements DBObject {
 
     public Set<String> keySet() {
         return DBobj.keySet();
+    }
+
+    public int size() {
+        return DBobj.keySet().size();
+    }
+
+    public boolean isEmpty() {
+        return size() > 0;
     }
 
     public String toString() {
