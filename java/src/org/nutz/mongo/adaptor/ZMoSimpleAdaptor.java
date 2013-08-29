@@ -17,8 +17,6 @@ public class ZMoSimpleAdaptor implements ZMoAdaptor {
 
     @Override
     public Object toMongo(ZMoField fld, Object obj) {
-        if (null == fld)
-            return obj;
         return obj;
     }
 

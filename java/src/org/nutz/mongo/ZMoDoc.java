@@ -2,7 +2,6 @@ package org.nutz.mongo;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +12,8 @@ import org.bson.types.ObjectId;
 import org.nutz.castor.Castors;
 import org.nutz.lang.Each;
 import org.nutz.lang.Lang;
-import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
+import org.nutz.mongo.adaptor.ZMoAs;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -283,33 +282,50 @@ public class ZMoDoc implements DBObject {
     public Object put(String key, Object v) {
         // 检查一下错误，防止 _id 输入错误
         if ("_id".equals(key)) {
-            // 空值
+            // 空值，表示移除
             if (v == null) {
                 DBobj.removeField("_id");
+                return null;
             }
-            // 错误类型
-            else if (!(v instanceof ObjectId)) {
+            // 普通的 ID
+            else if (v instanceof ObjectId) {
+                DBobj.put(key, v);
+                return v;
+            }
+            // 如果是字符串，尝试转换
+            else if (v instanceof CharSequence) {
+                try {
+                    ObjectId id = new ObjectId(v.toString());
+                    DBobj.put(key, id);
+                    return id;
+                }
+                catch (Exception e) {
+                    throw Lang.makeThrow("'%s' not ObjectId", v);
+                }
+            }
+            // 否则不能接受
+            else {
                 throw Lang.makeThrow("doc._id should be ObjectID(), but '%s'", v.getClass()
                                                                                 .getName());
             }
         }
-        // 确定值不是空
-        else if (null != v) {
-            // 如果是 DBObject 就允许
-            if (v instanceof DBObject) {}
-            // 如果 v 是 Map 或者 Collection 或者 Array 统统禁止
-            else if (v instanceof Map || v instanceof Collection) {
-                throw Lang.makeThrow("ZMoDoc can not put : %s", v.getClass().getName());
-            }
-            // 如果是 Array 则判断是否是原生的
-            else if (v.getClass().isArray()) {
-                Mirror<?> mi = Mirror.me(v.getClass().getComponentType());
-                if (!mi.isSimple()) {
-                    throw Lang.makeThrow("ZMoDoc can not put : %s", v.getClass().getName());
-                }
-            }
+        // 空值，直接压入
+        else if (null == v) {
+            DBobj.put(key, null);
+            return null;
         }
-        return DBobj.put(key, v);
+        /*
+         * 确定值不是空
+         */
+        // 如果是 DBObject 就允许
+        if (v instanceof DBObject) {
+            return DBobj.put(key, v);
+        }
+
+        // 其他情况，适配一下
+        Object o = ZMoAs.smart().toMongo(null, v);
+        DBobj.put(key, o);
+        return o;
     }
 
     public void markAsPartialObject() {
@@ -364,7 +380,7 @@ public class ZMoDoc implements DBObject {
     }
 
     public boolean isEmpty() {
-        return size() > 0;
+        return size() == 0;
     }
 
     public String toString() {

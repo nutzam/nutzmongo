@@ -1,8 +1,12 @@
 package org.nutz.mongo.adaptor;
 
+import java.util.regex.Pattern;
+
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
 import org.nutz.mongo.ZMoAdaptor;
+
+import com.mongodb.DBObject;
 
 /**
  * 各个适配器的单例工厂方法
@@ -13,9 +17,11 @@ public class ZMoAs {
 
     private static ZMoAdaptor _id = new ZMoIdAdaptor();
 
-    private static ZMoAdaptor _array = new ZMoArrayAdaptor();
+    private static ZMoAdaptor _dbo = new ZMoDBObjectAdaptor();
 
     private static ZMoAdaptor _collection = new ZMoCollectionAdaptor();
+
+    private static ZMoAdaptor _array = new ZMoArrayAdaptor();
 
     private static ZMoAdaptor _enum = new ZMoEnumAdaptor();
 
@@ -29,8 +35,12 @@ public class ZMoAs {
 
     public static ZMoAdaptor get(Mirror<?> mi) {
         // 简单类型
-        if (mi.isSimple()) {
+        if (mi.isSimple() || mi.is(Pattern.class)) {
             return ZMoAs.simple();
+        }
+        // DBObject
+        else if (mi.isOf(DBObject.class)) {
+            return ZMoAs.dbo();
         }
         // 集合
         else if (mi.isCollection()) {
@@ -60,12 +70,16 @@ public class ZMoAs {
         return _id;
     }
 
-    public static ZMoAdaptor array() {
-        return _array;
+    public static ZMoAdaptor dbo() {
+        return _dbo;
     }
 
     public static ZMoAdaptor collection() {
         return _collection;
+    }
+
+    public static ZMoAdaptor array() {
+        return _array;
     }
 
     public static ZMoAdaptor ENUM() {

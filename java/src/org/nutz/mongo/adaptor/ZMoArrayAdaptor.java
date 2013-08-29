@@ -2,6 +2,7 @@ package org.nutz.mongo.adaptor;
 
 import java.lang.reflect.Array;
 import java.util.Iterator;
+import java.util.List;
 
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
@@ -19,8 +20,8 @@ public class ZMoArrayAdaptor implements ZMoAdaptor {
 
     @Override
     public Object toJava(ZMoField fld, Object obj) {
-        if (obj instanceof BasicDBList) {
-            BasicDBList list = (BasicDBList) obj;
+        if (obj instanceof List<?>) {
+            List<?> list = (List<?>) obj;
 
             // 获取元素的实体
             ZMoEntity en = null;
@@ -37,7 +38,7 @@ public class ZMoArrayAdaptor implements ZMoAdaptor {
 
             // 开始循环数组
             int i = 0;
-            Iterator<Object> it = list.iterator();
+            Iterator<?> it = list.iterator();
             while (it.hasNext()) {
                 Object eleMongo = it.next();
                 Object elePojo;
