@@ -21,9 +21,9 @@ public class ZMoEnumAdaptor implements ZMoAdaptor {
     public Object toMongo(ZMoField fld, Object obj) {
         if (obj.getClass().isEnum()) {
             if (null != fld && fld.isEnumStr()) {
-                return obj.toString();
+                return ((Enum) obj).name();
             }
-            return ((Enum) obj).ordinal();
+            return Castors.me().castTo(obj, Integer.class);
         }
         throw Lang.makeThrow("obj<%s> should be ENUM", obj.getClass());
     }

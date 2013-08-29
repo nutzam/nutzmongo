@@ -45,6 +45,22 @@ public class ZMoDoc implements DBObject {
         return NEW().putv(key, v);
     }
 
+    public static ZMoDoc ID(Object id) {
+        return NEW().putv("_id", id);
+    }
+
+    public static ZMoDoc NOID() {
+        return NEW().putv("_id", 0);
+    }
+
+    public static ZMoDoc NOID(String key, int v) {
+        return NOID().putv(key, v);
+    }
+
+    public static ZMoDoc SET(String key, Object v) {
+        return NEW().set(key, v);
+    }
+
     public static ZMoDoc NEW(String json) {
         return NEW(Lang.map(json));
     }
@@ -120,6 +136,9 @@ public class ZMoDoc implements DBObject {
 
     // ------------------------------------------------------------
     // 下面是一些便捷的方法赖访问字段的值
+    public ObjectId getId() {
+        return this.getAs("_id", ObjectId.class);
+    }
 
     public int getInt(String key) {
         return getInt(key, -1);
@@ -303,10 +322,15 @@ public class ZMoDoc implements DBObject {
                     throw Lang.makeThrow("'%s' not ObjectId", v);
                 }
             }
+            // 如果是 boolean 或者整数表示过滤
+            else if (v instanceof Boolean || v instanceof Integer) {
+                DBobj.put(key, v);
+                return v;
+            }
             // 否则不能接受
             else {
-                throw Lang.makeThrow("doc._id should be ObjectID(), but '%s'", v.getClass()
-                                                                                .getName());
+                throw Lang.makeThrow("doc._id should be ObjectID(), but '%s'",
+                                     v.getClass().getName());
             }
         }
         // 空值，直接压入
