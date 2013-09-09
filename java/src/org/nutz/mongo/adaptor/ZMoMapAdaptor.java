@@ -1,6 +1,7 @@
 package org.nutz.mongo.adaptor;
 
 import org.nutz.lang.Lang;
+import org.nutz.lang.Mirror;
 import org.nutz.mongo.ZMo;
 import org.nutz.mongo.ZMoAdaptor;
 import org.nutz.mongo.ZMoDoc;
@@ -25,8 +26,9 @@ public class ZMoMapAdaptor implements ZMoAdaptor {
 
     @Override
     public Object toMongo(ZMoField fld, Object obj) {
-        if (fld.getMirror().isMap() || fld.getMirror().isPojo()) {
-            ZMoEntity en = ZMo.me().getEntity(fld.getType());
+        Mirror<?> mi = Mirror.me(obj);
+        if (mi.isMap() || mi.isPojo()) {
+            ZMoEntity en = ZMo.me().getEntity(mi.getType());
             return ZMo.me().toDoc(obj, en);
         }
         throw Lang.makeThrow("toMongo error: %s", obj.getClass());

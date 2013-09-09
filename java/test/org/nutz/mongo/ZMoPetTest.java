@@ -26,6 +26,20 @@ public class ZMoPetTest extends ZMoBaseTest {
     }
 
     @Test
+    public void test_query_by_age() {
+        c.save(mo.toDoc(Pet.NEW("A").setAge(10)));
+        c.save(mo.toDoc(Pet.NEW("B").setAge(11)));
+        c.save(mo.toDoc(Pet.NEW("D").setAge(13)));
+        c.save(mo.toDoc(Pet.NEW("C").setAge(12)));
+
+        ZMoDoc q = ZMoDoc.NEW("{age:{$gt:12}}");
+        ZMoDoc doc = c.findOne(q);
+        Pet pet = mo.fromDocToObj(doc, Pet.class);
+        assertEquals("D", pet.getName());
+        assertEquals(13, pet.getAge());
+    }
+
+    @Test
     public void test_update_inner_obj() {
         // 初始数据
         c.save(mo.toDoc(Pet.NEW("xiaobai")));
