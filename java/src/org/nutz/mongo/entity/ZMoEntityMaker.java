@@ -115,6 +115,10 @@ public class ZMoEntityMaker {
             if (null != anEnum) {
                 mof.setEnumStr(anEnum.str());
             }
+            // 没声明，默认用 string 表示 ENUM
+            else {
+                mof.setEnumStr(true);
+            }
 
             // 处理字段类型相关的适配方法
             mof.setType(fld.getType());
@@ -143,7 +147,9 @@ public class ZMoEntityMaker {
                 // 抽象类型 Collection
                 // 抽象类型 List
                 // 抽象类型 Queue
-                else if (fmi.is(Collection.class) || fmi.is(List.class) || fmi.is(Queue.class)) {
+                else if (fmi.is(Collection.class)
+                         || fmi.is(List.class)
+                         || fmi.is(Queue.class)) {
                     mof.setBorning(Mirror.me(LinkedList.class).getBorning());
                 }
                 // 抽象类型 Set
@@ -152,7 +158,8 @@ public class ZMoEntityMaker {
                 }
                 // 其他类型，抛错
                 else {
-                    throw Lang.makeThrow("can not found borning for %s", fmi.getType());
+                    throw Lang.makeThrow("can not found borning for %s",
+                                         fmi.getType());
                 }
 
             }

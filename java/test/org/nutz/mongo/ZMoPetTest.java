@@ -26,6 +26,14 @@ public class ZMoPetTest extends ZMoBaseTest {
     }
 
     @Test
+    public void test_dft_enum_should_be_str() {
+        c.save(mo.toDoc(Pet.NEW("A").setType(PetType.CAT)));
+
+        ZMoDoc doc = c.findOne(ZMoDoc.NEW("nm", "A"));
+        assertEquals("CAT", doc.getString("tp"));
+    }
+
+    @Test
     public void test_query_by_age() {
         c.save(mo.toDoc(Pet.NEW("A").setAge(10)));
         c.save(mo.toDoc(Pet.NEW("B").setAge(11)));
