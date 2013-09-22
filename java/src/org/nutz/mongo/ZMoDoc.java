@@ -140,6 +140,15 @@ public class ZMoDoc implements DBObject {
         return this.getAs("_id", ObjectId.class);
     }
 
+    public ObjectId getAsId(String key) {
+        Object obj = this.get(key);
+        if (null == obj)
+            return null;
+        if (obj instanceof ObjectId)
+            return (ObjectId) obj;
+        return new ObjectId(obj.toString());
+    }
+
     public int getInt(String key) {
         return getInt(key, -1);
     }
@@ -337,6 +346,11 @@ public class ZMoDoc implements DBObject {
         else if (null == v) {
             DBobj.put(key, null);
             return null;
+        }
+        // 对于 ObjectId
+        else if (v instanceof ObjectId) {
+            DBobj.put(key, v);
+            return v;
         }
         /*
          * 确定值不是空
