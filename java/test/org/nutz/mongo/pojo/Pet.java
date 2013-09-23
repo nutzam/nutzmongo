@@ -2,6 +2,7 @@ package org.nutz.mongo.pojo;
 
 import java.util.Date;
 
+import org.bson.types.ObjectId;
 import org.nutz.castor.Castors;
 import org.nutz.lang.Times;
 import org.nutz.lang.random.R;
@@ -18,8 +19,11 @@ public class Pet {
         for (int i = 0; i < names.length; i++) {
             pets[i] = NEW(names[i]).setAge(R.random(2, 20))
                                    .setBornAt(Times.now())
-                                   .setColor(Castors.me().castTo(R.random(0, 6), PetColor.class))
-                                   .setType(Castors.me().castTo(R.random(0, 4), PetType.class));
+                                   .setColor(Castors.me()
+                                                    .castTo(R.random(0, 6),
+                                                            PetColor.class))
+                                   .setType(Castors.me().castTo(R.random(0, 4),
+                                                                PetType.class));
         }
         return pets;
     }
@@ -49,6 +53,9 @@ public class Pet {
     private Human master;
 
     private String[] labels;
+
+    @MoField("frs")
+    private ObjectId[] friends;
 
     public String[] getLabels() {
         return labels;
@@ -127,6 +134,15 @@ public class Pet {
 
     public void setMaster(Human master) {
         this.master = master;
+    }
+
+    public ObjectId[] getFriends() {
+        return friends;
+    }
+
+    public Pet setFriends(ObjectId[] friends) {
+        this.friends = friends;
+        return this;
     }
 
 }

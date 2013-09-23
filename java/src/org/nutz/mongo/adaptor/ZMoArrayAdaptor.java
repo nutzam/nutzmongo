@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
 import org.nutz.mongo.ZMo;
@@ -56,7 +57,7 @@ public class ZMoArrayAdaptor implements ZMoAdaptor {
                 }
                 // 如果 fld 有 adaptor
                 else if (null != fld && null != fld.getEleAdaptor()) {
-                    elePojo = fld.getEleAdaptor().toJava(null, eleMongo);
+                    elePojo = fld.getEleAdaptor().toJava(fld, eleMongo);
                 }
                 // 其他情况，直接上 smart 咯
                 else {
@@ -80,8 +81,20 @@ public class ZMoArrayAdaptor implements ZMoAdaptor {
                 Object objPojo = Array.get(obj, i);
                 Object objMongo;
                 Mirror<?> mi = Mirror.me(objPojo);
+                // null
+                if (null == objPojo) {
+                    objMongo = null;
+                }
+                // 对于 ObjectId
+                else if (objPojo instanceof ObjectId) {
+                    objMongo = objPojo;
+                }
+                // 普通的 DBObject
+                else if (objPojo instanceof DBObject) {
+                    objMongo = obj;
+                }
                 // Map 或者 POJO
-                if (mi.isMap() || mi.isPojo()) {
+                else if (mi.isMap() || mi.isPojo()) {
                     objMongo = ZMo.me().toDoc(objPojo);
                 }
                 // 其他类型用 smart 转一下咯

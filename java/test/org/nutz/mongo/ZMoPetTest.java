@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Times;
@@ -13,6 +14,7 @@ import org.nutz.mongo.pojo.Pet;
 import org.nutz.mongo.pojo.PetColor;
 import org.nutz.mongo.pojo.PetType;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.DBCursor;
 
 public class ZMoPetTest extends ZMoBaseTest {
@@ -23,6 +25,31 @@ public class ZMoPetTest extends ZMoBaseTest {
     protected void prepare() {
         c = db.cc(Pet.CNAME, false);
         c.remove(ZMoDoc.NEW());
+    }
+
+    @Test
+    public void test_friends() {
+        ZMoDoc doc = ZMoDoc.NEW("nm", "A").genID();
+        c.insert(doc);
+
+        ZMoDoc d2 = ZMoDoc.NEW("nm", "B").putv("frs", Lang.array(doc.getId()));
+        BasicDBList frs = (BasicDBList) d2.get("frs");
+        assertEquals(1, frs.size());
+        ObjectId theId = (ObjectId) frs.get(0);
+        assertEquals(doc.getId(), theId);
+
+        c.insert(d2);
+
+        ZMoDoc d = c.findOne(ZMoDoc.NEW("nm", "B"));
+        frs = (BasicDBList) d.get("frs");
+        assertEquals(1, frs.size());
+        theId = (ObjectId) frs.get(0);
+        assertEquals(doc.getId(), theId);
+
+        Pet pet = mo.fromDocToObj(d, Pet.class);
+        assertEquals("B", pet.getName());
+        assertEquals(1, pet.getFriends().length);
+        assertEquals(doc.getId(), pet.getFriends()[0]);
     }
 
     @Test

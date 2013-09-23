@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.bson.types.ObjectId;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
 import org.nutz.mongo.ZMo;
@@ -77,6 +78,18 @@ public class ZMoCollectionAdaptor implements ZMoAdaptor {
             for (Object objPojo : coll) {
                 Object objMongo;
                 Mirror<?> mi = Mirror.me(objPojo);
+                // null
+                if (null == objPojo) {
+                    objMongo = null;
+                }
+                // 对于 ObjectId
+                else if (objPojo instanceof ObjectId) {
+                    objMongo = objPojo;
+                }
+                // 普通的 DBObject
+                else if (objPojo instanceof DBObject) {
+                    objMongo = obj;
+                }
                 // Map 或者 POJO
                 if (mi.isMap() || mi.isPojo()) {
                     objMongo = ZMo.me().toDoc(objPojo);
