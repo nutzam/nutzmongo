@@ -10,7 +10,9 @@ public class ZMoIdAdaptor implements ZMoAdaptor {
     @Override
     public Object toJava(ZMoField fld, Object obj) {
         if (obj instanceof ObjectId) {
-            if (null != fld && ObjectId.class.isAssignableFrom(fld.getType())) {
+            if (null != fld
+                && null != fld.getType()
+                && ObjectId.class.isAssignableFrom(fld.getType())) {
                 return obj;
             }
             return obj.toString();

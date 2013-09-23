@@ -2,6 +2,7 @@ package org.nutz.mongo.adaptor;
 
 import java.util.regex.Pattern;
 
+import org.bson.types.ObjectId;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
 import org.nutz.mongo.ZMoAdaptor;
@@ -34,8 +35,12 @@ public class ZMoAs {
     private static ZMoAdaptor _smart = new ZMoSmartAdaptor();
 
     public static ZMoAdaptor get(Mirror<?> mi) {
+        // ID 对象
+        if (mi.isOf(ObjectId.class)) {
+            return ZMoAs.id();
+        }
         // 简单类型
-        if (mi.isSimple() || mi.is(Pattern.class)) {
+        else if (mi.isSimple() || mi.is(Pattern.class)) {
             return ZMoAs.simple();
         }
         // DBObject
