@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.nutz.lang.Strings;
+
 /**
  * 缓存 ZMoEntity 对象
  * 
@@ -22,7 +24,10 @@ public class ZMoEntityHolder {
     }
 
     public void add(String key, ZMoEntity en) {
-        ens.put(key, en);
+        if (null != en && !Strings.isBlank(key)) {
+            en.setKey(key);
+            ens.put(key, en);
+        }
     }
 
     public Set<String> keys() {
@@ -35,11 +40,6 @@ public class ZMoEntityHolder {
 
     public ZMoEntity remove(String key) {
         return ens.remove(key);
-    }
-
-    public ZMoEntityHolder rm(String key) {
-        ens.remove(key);
-        return this;
     }
 
     public void clear() {

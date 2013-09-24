@@ -21,6 +21,11 @@ public class ZMoEntity {
     }
 
     /**
+     * 在 holder 中保存的唯一键值
+     */
+    private String key;
+
+    /**
      * 指定了这个映射是 Map 还是 Pojo
      */
     private Mode mode;
@@ -56,6 +61,14 @@ public class ZMoEntity {
         byJava = new HashMap<String, ZMoField>();
         byMongo = new HashMap<String, ZMoField>();
         defaultField = null;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public void setDefaultField(ZMoField defaultField) {

@@ -5,10 +5,41 @@ import static org.junit.Assert.*;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.nutz.lang.Lang;
+import org.nutz.lang.util.Closer;
+import org.nutz.mongo.fieldfilter.ZMoFFType;
+import org.nutz.mongo.fieldfilter.ZMoRegexFieldFilter;
+import org.nutz.mongo.fieldfilter.ZMoSimpleFieldFilter;
+import org.nutz.mongo.pojo.Pet;
+import org.nutz.mongo.pojo.PetType;
 
 import com.mongodb.BasicDBList;
 
 public class ZMoDocTest {
+
+    @Test
+    public void test_simple_field_filter() {
+        final Pet pet = Pet.NEW("xiaobai").setAge(10).setType(PetType.CAT);
+        ZMoDoc doc = new ZMoSimpleFieldFilter("name").run(new Closer<ZMoDoc>() {
+            public ZMoDoc invoke() {
+                return ZMo.me().toDoc(pet);
+            }
+        });
+        assertEquals(1, doc.size());
+        assertEquals("xiaobai", doc.get("nm").toString());
+    }
+
+    @Test
+    public void test_regex_field_filter() {
+        final Pet pet = Pet.NEW("xiaobai").setAge(10).setType(PetType.CAT);
+        ZMoDoc doc = new ZMoRegexFieldFilter("nm|tp", ZMoFFType.MONGO).run(new Closer<ZMoDoc>() {
+            public ZMoDoc invoke() {
+                return ZMo.me().toDoc(pet);
+            }
+        });
+        assertEquals(2, doc.size());
+        assertEquals("xiaobai", doc.get("nm").toString());
+        assertEquals(PetType.CAT, doc.getAs("tp", PetType.class));
+    }
 
     @Test
     public void test_fld_is_ObjectIdArray() {

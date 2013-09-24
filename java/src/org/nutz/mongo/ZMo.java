@@ -15,6 +15,7 @@ import org.nutz.mongo.entity.ZMoEntityHolder;
 import org.nutz.mongo.entity.ZMoEntityMaker;
 import org.nutz.mongo.entity.ZMoField;
 import org.nutz.mongo.entity.ZMoGeneralMapEntity;
+import org.nutz.mongo.fieldfilter.ZMoFF;
 
 import com.mongodb.DBObject;
 
@@ -77,11 +78,13 @@ public class ZMo {
             Class<? extends Object> objType = obj.getClass();
             // 数组不可以
             if (objType.isArray()) {
-                throw Lang.makeThrow("Array can not toDoc : %s", objType.getName());
+                throw Lang.makeThrow("Array can not toDoc : %s",
+                                     objType.getName());
             }
             // 集合不可以
             else if (obj instanceof Collection) {
-                throw Lang.makeThrow("Collection can not toDoc : %s", objType.getName());
+                throw Lang.makeThrow("Collection can not toDoc : %s",
+                                     objType.getName());
             }
             // POJO
             else {
@@ -117,9 +120,22 @@ public class ZMo {
     public ZMoDoc toDoc(Object obj, ZMoEntity en) {
         ZMoDoc doc = ZMoDoc.NEW();
         Set<String> javaNames = en.getJavaNames(obj);
+        // 获取字段过滤器
+        ZMoFF ff = ZMoFF.get();
+
+        // 循环每个字段
         for (String javaName : javaNames) {
             Object v = en.getValue(obj, javaName);
             ZMoField fld = en.javaField(javaName);
+            /*
+             * 是否需要过滤
+             */
+            if (null != ff && ff.isIgnore(fld)) {
+                continue;
+            }
+            /*
+             * 适配值
+             */
             String mongoName = en.getMongoNameFromJava(javaName);
             // 空值
             if (null == v) {
@@ -301,7 +317,10 @@ public class ZMo {
                 en.setValue(obj, javaName, pojov);
             }
             catch (Exception e) {
-                throw Lang.wrapThrow(e, "fail to set field %s#%s", en.getType(), key);
+                throw Lang.wrapThrow(e,
+                                     "fail to set field %s#%s",
+                                     en.getType(),
+                                     key);
             }
         }
         return obj;
@@ -354,7 +373,8 @@ public class ZMo {
                 en = holder.get(type.getName());
                 if (null == en) {
                     // 如果是 Map 或者 DBObject 用默认Map映射对象来搞
-                    if (Map.class.isAssignableFrom(type) || DBObject.class.isAssignableFrom(type)) {
+                    if (Map.class.isAssignableFrom(type)
+                        || DBObject.class.isAssignableFrom(type)) {
                         en = holder.get(DFT_MAP_KEY).clone();
                         holder.add(DFT_MAP_KEY, en);
                     }
