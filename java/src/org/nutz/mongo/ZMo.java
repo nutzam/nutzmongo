@@ -130,7 +130,7 @@ public class ZMo {
             /*
              * 是否需要过滤
              */
-            if (null != ff && ff.isIgnore(fld)) {
+            if (null != ff && ff.isIgnore(fld, v)) {
                 continue;
             }
             /*

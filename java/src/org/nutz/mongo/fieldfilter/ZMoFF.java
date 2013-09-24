@@ -1,5 +1,8 @@
 package org.nutz.mongo.fieldfilter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nutz.lang.util.Closer;
 import org.nutz.mongo.entity.ZMoField;
 
@@ -36,31 +39,93 @@ public abstract class ZMoFF {
         }
     }
 
-    protected boolean asIgnore;
-
-    protected ZMoFFType fftype;
+    /**
+     * true 表示匹配上的字段忽略，false 表示匹配上的字段不忽略
+     */
+    private boolean asIgnore;
 
     /**
-     * @param asIgnore
-     *            如果字段匹配正则表达式，true 表示忽略，false 表示不忽略
-     * @param fftype
-     *            用 Java 字段还是 Mongo 字段匹配
+     * true 表示匹配Java字段，false 表示匹配Mongo字段
      */
-    protected ZMoFF(boolean asIgnore, ZMoFFType fftype) {
-        this.asIgnore = asIgnore;
-        this.fftype = fftype == null ? ZMoFFType.JAVA : fftype;
-    }
+    private boolean byJava;
 
-    protected String getMatchName(ZMoField fld) {
-        return ZMoFFType.JAVA == fftype ? fld.getJavaName()
-                                       : fld.getMongoName();
+    /**
+     * 是否忽略 null 值
+     */
+    private boolean ignoreNull;
+
+    /**
+     * 对于特殊字段，指定为特殊值的时候忽略
+     */
+    private Map<String, Number> ignoreNumber;
+
+    protected ZMoFF() {
+        asIgnore = false;
+        byJava = true;
+        ignoreNull = false;
+        ignoreNumber = new HashMap<String, Number>();
     }
 
     /**
      * @param fld
      *            当前字段
-     * @return false 表示忽略这个字段
+     * @return 是否忽略这个字段
      */
-    public abstract boolean isIgnore(ZMoField fld);
+    public boolean isIgnore(ZMoField fld, Object v) {
+        if (null == v && ignoreNull)
+            return true;
+
+        // 得到名称
+        String key = byJava ? fld.getJavaName() : fld.getMongoName();
+
+        // 如果是数字，那么看看是否需要忽略
+        if (null != v && !ignoreNumber.isEmpty() && v instanceof Number) {
+            Number n = ignoreNumber.get(key);
+            if (null != n && n.doubleValue() == ((Number) v).doubleValue())
+                return true;
+        }
+
+        // 如果匹配上了
+        if (match(key)) {
+            return asIgnore;
+        }
+        return !asIgnore;
+    }
+
+    public ZMoFF asIgnore(boolean asActive) {
+        this.asIgnore = asActive;
+        return this;
+    }
+
+    public ZMoFF byJava(boolean byJava) {
+        this.byJava = byJava;
+        return this;
+    }
+
+    public ZMoFF ignoreNull(boolean ignoreNull) {
+        this.ignoreNull = ignoreNull;
+        return this;
+    }
+
+    /**
+     * @param key
+     *            根据 byJava 的设定
+     * @param n
+     *            值
+     * @return 自身
+     */
+    public ZMoFF ignoreNumber(String key, Number n) {
+        ignoreNumber.put(key, n);
+        return this;
+    }
+
+    /**
+     * 子类的抽象实现
+     * 
+     * @param fld
+     *            字段名
+     * @return 是否匹配上
+     */
+    protected abstract boolean match(String fld);
 
 }

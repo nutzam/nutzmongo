@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.nutz.lang.Lang;
 import org.nutz.lang.util.Closer;
-import org.nutz.mongo.fieldfilter.ZMoFFType;
+import org.nutz.mongo.fieldfilter.ZMoFF;
 import org.nutz.mongo.fieldfilter.ZMoRegexFF;
 import org.nutz.mongo.fieldfilter.ZMoSimpleFF;
 import org.nutz.mongo.pojo.Pet;
@@ -19,7 +19,8 @@ public class ZMoDocTest {
     @Test
     public void test_simple_field_filter() {
         final Pet pet = Pet.NEW("xiaobai").setAge(10).setType(PetType.CAT);
-        ZMoDoc doc = new ZMoSimpleFF("name").run(new Closer<ZMoDoc>() {
+        ZMoSimpleFF ff = new ZMoSimpleFF("name");
+        ZMoDoc doc = ff.run(new Closer<ZMoDoc>() {
             public ZMoDoc invoke() {
                 return ZMo.me().toDoc(pet);
             }
@@ -31,7 +32,8 @@ public class ZMoDocTest {
     @Test
     public void test_regex_field_filter() {
         final Pet pet = Pet.NEW("xiaobai").setAge(10).setType(PetType.CAT);
-        ZMoDoc doc = new ZMoRegexFF("nm|tp", ZMoFFType.MONGO).run(new Closer<ZMoDoc>() {
+        ZMoFF ff = new ZMoRegexFF("nm|tp").byJava(false);
+        ZMoDoc doc = ff.run(new Closer<ZMoDoc>() {
             public ZMoDoc invoke() {
                 return ZMo.me().toDoc(pet);
             }

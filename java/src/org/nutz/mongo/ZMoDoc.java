@@ -61,6 +61,10 @@ public class ZMoDoc implements DBObject {
         return NEW().set(key, v);
     }
 
+    public static ZMoDoc SET(DBObject dbo) {
+        return NEW().set(dbo);
+    }
+
     public static ZMoDoc NEW(String json) {
         return NEW(Lang.map(json));
     }
@@ -120,9 +124,10 @@ public class ZMoDoc implements DBObject {
      * 本函数会设置 "$set" : {...} ，如果没有 "$set" 键，会添加
      * 
      * @param name
-     *            : 要设置字段的名称
+     *            要设置字段的名称
      * @param v
-     *            : 要设置字段的值
+     *            要设置字段的值
+     * @return 自身以便链式赋值
      */
     public ZMoDoc set(String name, Object v) {
         DBObject o = getAs("$set", DBObject.class);
@@ -131,6 +136,23 @@ public class ZMoDoc implements DBObject {
             put("$set", o);
         }
         o.put(name, v);
+        return this;
+    }
+
+    /**
+     * 本函数会将一个字段对象变为 $set，如果已经有了 $set 则合并
+     * 
+     * @param dbo
+     *            文档对象
+     * @return 自身以便链式赋值
+     */
+    public ZMoDoc set(DBObject dbo) {
+        DBObject o = getAs("$set", DBObject.class);
+        if (null == o) {
+            put("$set", dbo);
+        } else {
+            o.putAll(dbo);
+        }
         return this;
     }
 
