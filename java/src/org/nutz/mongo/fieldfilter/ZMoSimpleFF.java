@@ -8,7 +8,7 @@ import org.nutz.mongo.entity.ZMoField;
  * 
  * @author zozoh(zozohtnt@gmail.com)
  */
-public class ZMoSimpleFieldFilter extends ZMoFF {
+public class ZMoSimpleFF extends ZMoFF {
 
     private String[] names;
 
@@ -22,18 +22,16 @@ public class ZMoSimpleFieldFilter extends ZMoFF {
      * @param fftype
      *            用 Java 字段还是 Mongo 字段匹配
      */
-    public ZMoSimpleFieldFilter(boolean asIgnore,
-                                ZMoFFType fftype,
-                                String... names) {
+    public ZMoSimpleFF(boolean asIgnore, ZMoFFType fftype, String... names) {
         super(asIgnore, fftype);
         this.names = names;
     }
 
-    public ZMoSimpleFieldFilter(ZMoFFType fftype, String... names) {
+    public ZMoSimpleFF(ZMoFFType fftype, String... names) {
         this(false, fftype, names);
     }
 
-    public ZMoSimpleFieldFilter(String... names) {
+    public ZMoSimpleFF(String... names) {
         this(false, ZMoFFType.JAVA, names);
     }
 

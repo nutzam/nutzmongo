@@ -9,7 +9,7 @@ import org.nutz.mongo.entity.ZMoField;
  * 
  * @author zozoh(zozohtnt@gmail.com)
  */
-public class ZMoRegexFieldFilter extends ZMoFF {
+public class ZMoRegexFF extends ZMoFF {
 
     private Pattern regex;
 
@@ -21,16 +21,16 @@ public class ZMoRegexFieldFilter extends ZMoFF {
      * @param fftype
      *            用 Java 字段还是 Mongo 字段匹配
      */
-    public ZMoRegexFieldFilter(boolean asIgnore, String regex, ZMoFFType fftype) {
+    public ZMoRegexFF(boolean asIgnore, String regex, ZMoFFType fftype) {
         super(asIgnore, fftype);
         this.regex = Pattern.compile(regex);
     }
 
-    public ZMoRegexFieldFilter(String regex, ZMoFFType fftype) {
+    public ZMoRegexFF(String regex, ZMoFFType fftype) {
         this(false, regex, fftype);
     }
 
-    public ZMoRegexFieldFilter(String regex) {
+    public ZMoRegexFF(String regex) {
         this(false, regex, ZMoFFType.JAVA);
     }
 
