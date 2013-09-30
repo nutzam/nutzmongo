@@ -12,7 +12,7 @@ public class ZMoSimpleAdaptor implements ZMoAdaptor {
     public Object toJava(ZMoField fld, Object obj) {
         if (null == fld)
             return obj;
-        if (fld.getMirror().isArray()) {
+        if (null != fld && null != fld.getMirror() && fld.getMirror().isArray()) {
             return Castors.me().castTo(obj, fld.getEleType());
         }
         return Castors.me().castTo(obj, fld.getType());

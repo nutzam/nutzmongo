@@ -1,5 +1,7 @@
 package org.nutz.mongo.fieldfilter;
 
+import java.util.List;
+
 import org.nutz.lang.Lang;
 
 /**
@@ -18,6 +20,10 @@ public class ZMoSimpleFF extends ZMoFF {
     public ZMoSimpleFF(String... names) {
         super();
         this.names = names;
+    }
+
+    public ZMoSimpleFF(List<String> names) {
+        this.names = names.toArray(new String[names.size()]);
     }
 
     @Override

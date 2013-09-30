@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.nutz.lang.util.Closer;
+import org.nutz.mongo.ZMo;
+import org.nutz.mongo.ZMoDoc;
 import org.nutz.mongo.entity.ZMoField;
 
 /**
@@ -37,6 +39,14 @@ public abstract class ZMoFF {
         finally {
             remove();
         }
+    }
+
+    public ZMoDoc toDoc(final Object obj) {
+        return run(new Closer<ZMoDoc>() {
+            public ZMoDoc invoke() {
+                return ZMo.me().toDoc(obj);
+            }
+        });
     }
 
     /**

@@ -13,6 +13,7 @@ import org.nutz.castor.Castors;
 import org.nutz.lang.Each;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.mongo.adaptor.ZMoAs;
 
 import com.mongodb.BasicDBObject;
@@ -49,6 +50,10 @@ public class ZMoDoc implements DBObject {
         return NEW().putv("_id", id);
     }
 
+    public static <T> ZMoDoc IN(String key, T[] vs) {
+        return NEW().in(key, vs);
+    }
+
     public static ZMoDoc NOID() {
         return NEW().putv("_id", 0);
     }
@@ -63,6 +68,10 @@ public class ZMoDoc implements DBObject {
 
     public static ZMoDoc SET(DBObject dbo) {
         return NEW().set(dbo);
+    }
+
+    public static ZMoDoc M(String mnm, String key, Object v) {
+        return NEW().m(mnm, key, v);
     }
 
     public static ZMoDoc NEW(String json) {
@@ -113,6 +122,12 @@ public class ZMoDoc implements DBObject {
         return this;
     }
 
+    public ZMoDoc rm(String... keys) {
+        for (String key : keys)
+            this.removeField(key);
+        return this;
+    }
+
     public <T> ZMoDoc in(String key, T[] vs) {
         put(key, NEW("$in", vs));
         return this;
@@ -123,20 +138,14 @@ public class ZMoDoc implements DBObject {
     /**
      * 本函数会设置 "$set" : {...} ，如果没有 "$set" 键，会添加
      * 
-     * @param name
+     * @param key
      *            要设置字段的名称
      * @param v
      *            要设置字段的值
      * @return 自身以便链式赋值
      */
-    public ZMoDoc set(String name, Object v) {
-        DBObject o = getAs("$set", DBObject.class);
-        if (null == o) {
-            o = ZMoDoc.NEW();
-            put("$set", o);
-        }
-        o.put(name, v);
-        return this;
+    public ZMoDoc set(String key, Object v) {
+        return m("$set", key, v);
     }
 
     /**
@@ -154,6 +163,34 @@ public class ZMoDoc implements DBObject {
             o.putAll(dbo);
         }
         return this;
+    }
+
+    /**
+     * 本函数会设置 "mnm" : {...} ，如果没有修改器的键，会添加这个对象，如果有，合并
+     * 
+     * @param mnm
+     *            修改器名称
+     * @param key
+     *            键
+     * @param v
+     *            值
+     * @return 自身以便链式赋值
+     */
+    public ZMoDoc m(String mnm, String key, Object v) {
+        DBObject o = getAs(mnm, DBObject.class);
+        if (null == o) {
+            o = ZMoDoc.NEW();
+            put(mnm, o);
+        }
+        o.put(key, v);
+        return this;
+    }
+
+    public NutMap toNutMap() {
+        NutMap map = new NutMap();
+        for (String key : this.keySet())
+            map.put(key, this.get(key));
+        return map;
     }
 
     // ------------------------------------------------------------
@@ -326,6 +363,48 @@ public class ZMoDoc implements DBObject {
 
     }
 
+    /**
+     * 将自己包含的 DBObject 作为一个 List
+     * 
+     * @param <T>
+     * @param classOfT
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> asList(Class<T> classOfT) {
+        List<?> list = asList();
+        ArrayList<T> re = new ArrayList<T>(list.size());
+        for (Object obj : list) {
+            // NULL
+            if (obj == null) {
+                re.add((T) obj);
+                continue;
+            }
+            Class<?> objType = obj.getClass();
+            // 正好可以转型
+            if (classOfT.isAssignableFrom(objType)) {
+                re.add((T) obj);
+            }
+            // 如果是 DBObject 可以包裹成 ZMoDoc
+            else if (classOfT == ZMoDoc.class
+                     && DBObject.class.isAssignableFrom(objType)) {
+                re.add((T) ZMoDoc.WRAP((DBObject) obj));
+            }
+            // 其他情况，试图强转一下
+            else {
+                re.add(Castors.me().castTo(obj, classOfT));
+            }
+        }
+        return re;
+    }
+
+    public List<?> asList() {
+        if (DBobj instanceof List<?>)
+            return (List<?>) DBobj;
+        throw Lang.makeThrow("wrapping DBobj not instanceof List : %s",
+                             DBobj.getClass());
+    }
+
     // ------------------------------------------------------------
     // 下面都是委托方法
 
@@ -372,6 +451,11 @@ public class ZMoDoc implements DBObject {
         // 对于 ObjectId
         else if (v instanceof ObjectId) {
             DBobj.put(key, v);
+            return v;
+        }
+        // 如果是枚举
+        else if (v instanceof Enum) {
+            DBobj.put(key, v.toString());
             return v;
         }
         /*
