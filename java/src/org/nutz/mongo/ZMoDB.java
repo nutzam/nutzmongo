@@ -105,4 +105,7 @@ public class ZMoDB {
         return db.getCollectionNames();
     }
 
+    public DB getNativeDB() {
+        return this.db;
+    }
 }
