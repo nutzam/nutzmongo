@@ -283,6 +283,8 @@ public class ZMo {
      * @return 普通Java对象
      */
     public Object fromDoc(DBObject dbobj, ZMoEntity en) {
+        if (null == dbobj)
+            return null;
         ZMoDoc doc = ZMoDoc.WRAP(dbobj);
         if (null == en) {
             en = holder.get(DFT_MAP_KEY);
