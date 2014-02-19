@@ -138,30 +138,6 @@ public class ZMoCo {
         dbc.createIndex(keys, options);
     }
 
-    public void createIndex(ZMoDoc keys, ZMoDoc options, DBEncoder encoder) {
-        dbc.createIndex(keys, options, encoder);
-    }
-
-    public void ensureIndex(String name) {
-        dbc.ensureIndex(name);
-    }
-
-    public void ensureIndex(ZMoDoc keys) {
-        dbc.ensureIndex(keys);
-    }
-
-    public void ensureIndex(ZMoDoc keys, String name) {
-        dbc.ensureIndex(keys, name);
-    }
-
-    public void ensureIndex(ZMoDoc keys, String name, boolean unique) {
-        dbc.ensureIndex(keys, name, unique);
-    }
-
-    public void ensureIndex(ZMoDoc keys, ZMoDoc optionsIN) {
-        dbc.ensureIndex(keys, optionsIN);
-    }
-
     public void resetIndexCache() {
         dbc.resetIndexCache();
     }
@@ -353,12 +329,8 @@ public class ZMoCo {
         return dbc.mapReduce(command);
     }
 
-    public MapReduceOutput mapReduce(ZMoDoc command) {
-        return dbc.mapReduce(command);
-    }
-
-    public AggregationOutput aggregate(ZMoDoc firstOp, ZMoDoc... additionalOps) {
-        return dbc.aggregate(firstOp, additionalOps);
+    public AggregationOutput aggregate(final List<DBObject> pipeline) {
+        return dbc.aggregate(pipeline);
     }
 
     public List<ZMoDoc> getIndexInfo() {
