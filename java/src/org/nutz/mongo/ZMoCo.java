@@ -36,7 +36,9 @@ public class ZMoCo {
         return dbc.insert(arr, concern);
     }
 
-    public WriteResult insert(ZMoDoc[] arr, WriteConcern concern, DBEncoder encoder) {
+    public WriteResult insert(ZMoDoc[] arr,
+                              WriteConcern concern,
+                              DBEncoder encoder) {
         return dbc.insert(arr, concern, encoder);
     }
 
@@ -63,7 +65,9 @@ public class ZMoCo {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public WriteResult insert(List<ZMoDoc> list, WriteConcern concern, DBEncoder encoder) {
+    public WriteResult insert(List<ZMoDoc> list,
+                              WriteConcern concern,
+                              DBEncoder encoder) {
         return dbc.insert((List) list, concern, encoder);
     }
 
@@ -115,7 +119,13 @@ public class ZMoCo {
                                   ZMoDoc update,
                                   boolean returnNew,
                                   boolean upsert) {
-        return dbc.findAndModify(query, fields, sort, remove, update, returnNew, upsert);
+        return dbc.findAndModify(query,
+                                 fields,
+                                 sort,
+                                 remove,
+                                 update,
+                                 returnNew,
+                                 upsert);
     }
 
     public DBObject findAndModify(ZMoDoc query, ZMoDoc sort, ZMoDoc update) {
@@ -136,10 +146,6 @@ public class ZMoCo {
 
     public void createIndex(ZMoDoc keys, ZMoDoc options) {
         dbc.createIndex(keys, options);
-    }
-
-    public void resetIndexCache() {
-        dbc.resetIndexCache();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -179,7 +185,10 @@ public class ZMoCo {
         return ZMoDoc.WRAP(dbc.findOne(o, fields, readPref));
     }
 
-    public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields, ZMoDoc orderBy, ReadPreference readPref) {
+    public ZMoDoc findOne(ZMoDoc o,
+                          ZMoDoc fields,
+                          ZMoDoc orderBy,
+                          ReadPreference readPref) {
         return ZMoDoc.WRAP(dbc.findOne(o, fields, orderBy, readPref));
     }
 
@@ -267,7 +276,11 @@ public class ZMoCo {
         return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce));
     }
 
-    public ZMoDoc group(ZMoDoc key, ZMoDoc cond, ZMoDoc initial, String reduce, String finalize) {
+    public ZMoDoc group(ZMoDoc key,
+                        ZMoDoc cond,
+                        ZMoDoc initial,
+                        String reduce,
+                        String finalize) {
         return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce, finalize));
     }
 
@@ -277,7 +290,12 @@ public class ZMoCo {
                         String reduce,
                         String finalize,
                         ReadPreference readPrefs) {
-        return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce, finalize, readPrefs));
+        return ZMoDoc.WRAP(dbc.group(key,
+                                     cond,
+                                     initial,
+                                     reduce,
+                                     finalize,
+                                     readPrefs));
     }
 
     public ZMoDoc group(GroupCommand cmd) {
@@ -304,7 +322,10 @@ public class ZMoCo {
         return dbc.distinct(key, query, readPrefs);
     }
 
-    public MapReduceOutput mapReduce(String map, String reduce, String outputTarget, ZMoDoc query) {
+    public MapReduceOutput mapReduce(String map,
+                                     String reduce,
+                                     String outputTarget,
+                                     ZMoDoc query) {
         return dbc.mapReduce(map, reduce, outputTarget, query);
     }
 
@@ -322,7 +343,12 @@ public class ZMoCo {
                                      OutputType outputType,
                                      ZMoDoc query,
                                      ReadPreference readPrefs) {
-        return dbc.mapReduce(map, reduce, outputTarget, outputType, query, readPrefs);
+        return dbc.mapReduce(map,
+                             reduce,
+                             outputTarget,
+                             outputType,
+                             query,
+                             readPrefs);
     }
 
     public MapReduceOutput mapReduce(MapReduceCommand command) {

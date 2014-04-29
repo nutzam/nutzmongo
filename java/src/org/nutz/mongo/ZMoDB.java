@@ -94,6 +94,7 @@ public class ZMoDB {
      * @param force
      *            是否强制
      */
+    @Deprecated
     public void cleanCursors(boolean force) {
         db.cleanCursors(force);
     }

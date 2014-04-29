@@ -19,6 +19,7 @@ public abstract class ZMoBaseTest {
         prepare();
     }
 
+    @SuppressWarnings("deprecation")
     @After
     public void after() {
         db.cleanCursors(true);
