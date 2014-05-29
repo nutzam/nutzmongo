@@ -37,15 +37,19 @@ public class ZMongo {
     }
 
     public static ZMongo me(String host, int port) {
-        return new ZMongo(Lang.list(NEW_SA(host, port)), null, null);
+        return me(NEW_SA(host, port), null);
+    }
+
+    public static ZMongo me(ServerAddress sa, MongoCredential cred) {
+        return me(sa, cred, null);
     }
 
     public static ZMongo me(ServerAddress sa,
                             MongoCredential cred,
                             MongoClientOptions mopt) {
-        return new ZMongo(Lang.list(sa),
-                          cred == null ? null : Lang.list(cred),
-                          mopt);
+        return new ZMongo(sa == null ? null : Lang.list(sa),
+                  cred == null ? null : Lang.list(cred),
+                  mopt);
     }
 
     public static ZMongo me(List<ServerAddress> sas,
@@ -56,6 +60,24 @@ public class ZMongo {
 
     public static ZMongo me(MongoClient mc) {
         return new ZMongo(mc);
+    }
+
+    public static ZMongo me(String userName,
+                            String password,
+                            String host,
+                            int port) {
+        return me(userName, password, host, port, null);
+    }
+
+    public static ZMongo me(String userName,
+                            String password,
+                            String host,
+                            int port,
+                            String database) {
+        return me(NEW_SA(host, port),
+                  MongoCredential.createMongoCRCredential(userName,
+                                                          database,
+                                                          password.toCharArray()));
     }
 
     /**
