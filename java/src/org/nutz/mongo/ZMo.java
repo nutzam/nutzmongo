@@ -345,19 +345,30 @@ public class ZMo {
     }
 
     /**
-     * 将任何一个文档对象转换成指定 Java 对象（不可以是 Map 等容器）
+     * 将任何一个文档对象转换成一个 Map 对象
      * 
-     * @param <T>
-     *            对象的类型参数
      * @param dbobj
      *            文档对象
-     * @param en
-     *            映射关系，如果为 null，则直接变成 Map
      * @return Map 对象
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> fromDocToMap(DBObject dbobj) {
         return (Map<String, Object>) fromDoc(dbobj, null);
+    }
+
+    /**
+     * 将任何一个文档对象转换成一个指定类型的 Map 对象
+     * 
+     * @param <T>
+     *            Map 对象的类型参数
+     * @param dbobj
+     *            文档对象
+     * @return Map 对象
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Map<String, Object>> T fromDocToMap(DBObject dbobj,
+                                                          Class<T> classOfMap) {
+        return (T) fromDoc(dbobj, getEntity(classOfMap));
     }
 
     /**
@@ -378,6 +389,8 @@ public class ZMo {
                     if (Map.class.isAssignableFrom(type)
                         || DBObject.class.isAssignableFrom(type)) {
                         en = holder.get(DFT_MAP_KEY).clone();
+                        en.setType(type);
+                        en.setBorning(en.getMirror().getBorning());
                         holder.add(DFT_MAP_KEY, en);
                     }
                     // 普通 POJO

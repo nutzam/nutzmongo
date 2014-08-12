@@ -1,10 +1,8 @@
 package org.nutz.mongo.entity;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.nutz.lang.Mirror;
 import org.nutz.lang.util.NutMap;
 
 import com.mongodb.DBObject;
@@ -14,8 +12,8 @@ public class ZMoGeneralMapEntity extends ZMoEntity {
     public ZMoGeneralMapEntity() {
         super();
         setDefaultField(new ZMoGeneralMapField());
-        setType(HashMap.class);
-        setBorning(Mirror.me(NutMap.class).getBorning());
+        setType(NutMap.class);
+        setBorning(this.getMirror().getBorning());
     }
 
     @Override
