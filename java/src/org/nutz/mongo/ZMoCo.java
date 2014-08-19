@@ -112,32 +112,32 @@ public class ZMoCo {
         return dbc.remove(o);
     }
 
-    public DBObject findAndModify(ZMoDoc query,
-                                  ZMoDoc fields,
-                                  ZMoDoc sort,
-                                  boolean remove,
-                                  ZMoDoc update,
-                                  boolean returnNew,
-                                  boolean upsert) {
-        return dbc.findAndModify(query,
-                                 fields,
-                                 sort,
-                                 remove,
-                                 update,
-                                 returnNew,
-                                 upsert);
+    public ZMoDoc findAndModify(ZMoDoc query,
+                                ZMoDoc fields,
+                                ZMoDoc sort,
+                                boolean remove,
+                                ZMoDoc update,
+                                boolean returnNew,
+                                boolean upsert) {
+        return ZMoDoc.WRAP(dbc.findAndModify(query,
+                                             fields,
+                                             sort,
+                                             remove,
+                                             update,
+                                             returnNew,
+                                             upsert));
     }
 
-    public DBObject findAndModify(ZMoDoc query, ZMoDoc sort, ZMoDoc update) {
-        return dbc.findAndModify(query, sort, update);
+    public ZMoDoc findAndModify(ZMoDoc query, ZMoDoc sort, ZMoDoc update) {
+        return ZMoDoc.WRAP(dbc.findAndModify(query, sort, update));
     }
 
-    public DBObject findAndModify(ZMoDoc query, ZMoDoc update) {
-        return dbc.findAndModify(query, update);
+    public ZMoDoc findAndModify(ZMoDoc query, ZMoDoc update) {
+        return ZMoDoc.WRAP(dbc.findAndModify(query, update));
     }
 
-    public DBObject findAndRemove(ZMoDoc query) {
-        return dbc.findAndRemove(query);
+    public ZMoDoc findAndRemove(ZMoDoc query) {
+        return ZMoDoc.WRAP(dbc.findAndRemove(query));
     }
 
     public void createIndex(ZMoDoc keys) {

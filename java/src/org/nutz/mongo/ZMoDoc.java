@@ -53,6 +53,10 @@ public class ZMoDoc implements DBObject {
     public static <T> ZMoDoc IN(String key, T[] vs) {
         return NEW().in(key, vs);
     }
+    
+    public static <T> ZMoDoc ALL(String key, T[] vs) {
+        return NEW().all(key, vs);
+    }
 
     public static ZMoDoc NOID() {
         return NEW().putv("_id", 0);
@@ -130,6 +134,11 @@ public class ZMoDoc implements DBObject {
 
     public <T> ZMoDoc in(String key, T[] vs) {
         put(key, NEW("$in", vs));
+        return this;
+    }
+    
+    public <T> ZMoDoc all(String key, T[] vs) {
+        put(key, NEW("$all", vs));
         return this;
     }
 
