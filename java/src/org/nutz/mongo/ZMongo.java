@@ -48,8 +48,8 @@ public class ZMongo {
                             MongoCredential cred,
                             MongoClientOptions mopt) {
         return new ZMongo(sa == null ? null : Lang.list(sa),
-                  cred == null ? null : Lang.list(cred),
-                  mopt);
+                          cred == null ? null : Lang.list(cred),
+                          mopt);
     }
 
     public static ZMongo me(List<ServerAddress> sas,
@@ -87,6 +87,10 @@ public class ZMongo {
 
     private ZMongo(MongoClient mc) {
         this.moclient = mc;
+    }
+
+    public void close() {
+        moclient.close();
     }
 
     /**

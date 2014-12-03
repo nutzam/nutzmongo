@@ -53,7 +53,7 @@ public class ZMoDoc implements DBObject {
     public static <T> ZMoDoc IN(String key, T[] vs) {
         return NEW().in(key, vs);
     }
-    
+
     public static <T> ZMoDoc ALL(String key, T[] vs) {
         return NEW().all(key, vs);
     }
@@ -136,7 +136,7 @@ public class ZMoDoc implements DBObject {
         put(key, NEW("$in", vs));
         return this;
     }
-    
+
     public <T> ZMoDoc all(String key, T[] vs) {
         put(key, NEW("$all", vs));
         return this;
@@ -175,6 +175,20 @@ public class ZMoDoc implements DBObject {
     }
 
     /**
+     * 删除一组字段。 相当于 <code>$unset : {a:1,b:1...}</code>
+     * 
+     * @param keys
+     *            字段名
+     * @return 自身以便链式赋值
+     */
+    public ZMoDoc unset(String... keys) {
+        for (String key : keys) {
+            m("$unset", key, 1);
+        }
+        return this;
+    }
+
+    /**
      * 本函数会设置 "mnm" : {...} ，如果没有修改器的键，会添加这个对象，如果有，合并
      * 
      * @param mnm
@@ -192,6 +206,11 @@ public class ZMoDoc implements DBObject {
             put(mnm, o);
         }
         o.put(key, v);
+        return this;
+    }
+
+    public ZMoDoc exists(String nm, boolean exists) {
+        put(nm, NEW("$exists", exists));
         return this;
     }
 
