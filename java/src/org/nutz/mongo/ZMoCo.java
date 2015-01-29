@@ -192,14 +192,6 @@ public class ZMoCo {
         return ZMoDoc.WRAP(dbc.findOne(o, fields, orderBy, readPref));
     }
 
-    public Object apply(ZMoDoc o) {
-        return dbc.apply(o);
-    }
-
-    public Object apply(ZMoDoc jo, boolean ensureID) {
-        return dbc.apply(jo, ensureID);
-    }
-
     public WriteResult save(ZMoDoc jo) {
         return dbc.save(jo);
     }
