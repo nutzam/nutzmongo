@@ -78,13 +78,11 @@ public class ZMo {
             Class<? extends Object> objType = obj.getClass();
             // 数组不可以
             if (objType.isArray()) {
-                throw Lang.makeThrow("Array can not toDoc : %s",
-                                     objType.getName());
+                throw Lang.makeThrow("Array can not toDoc : %s", objType.getName());
             }
             // 集合不可以
             else if (obj instanceof Collection) {
-                throw Lang.makeThrow("Collection can not toDoc : %s",
-                                     objType.getName());
+                throw Lang.makeThrow("Collection can not toDoc : %s", objType.getName());
             }
             // POJO
             else {
@@ -319,10 +317,7 @@ public class ZMo {
                 en.setValue(obj, javaName, pojov);
             }
             catch (Exception e) {
-                throw Lang.wrapThrow(e,
-                                     "fail to set field %s#%s",
-                                     en.getType(),
-                                     key);
+                throw Lang.wrapThrow(e, "fail to set field %s#%s", en.getType(), key);
             }
         }
         return obj;
@@ -391,7 +386,7 @@ public class ZMo {
                         en = holder.get(DFT_MAP_KEY).clone();
                         en.setType(type);
                         en.setBorning(en.getMirror().getBorning());
-                        holder.add(DFT_MAP_KEY, en);
+                        holder.add(type.getName(), en);
                     }
                     // 普通 POJO
                     else {
