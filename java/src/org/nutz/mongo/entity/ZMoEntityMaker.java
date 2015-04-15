@@ -124,7 +124,7 @@ public class ZMoEntityMaker {
             mof.setType(fld.getType());
             Mirror<?> fmi = Mirror.me(fld.getType());
             mof.setAdaptor(ZMoAs.get(fmi));
-            mof.setEjecting(mi.getEjecting(fld.getName()));
+            mof.setEjecting(mi.getEjecting(fld));
             mof.setInjecting(mi.getInjecting(fld.getName()));
 
             /*
@@ -147,9 +147,7 @@ public class ZMoEntityMaker {
                 // 抽象类型 Collection
                 // 抽象类型 List
                 // 抽象类型 Queue
-                else if (fmi.is(Collection.class)
-                         || fmi.is(List.class)
-                         || fmi.is(Queue.class)) {
+                else if (fmi.is(Collection.class) || fmi.is(List.class) || fmi.is(Queue.class)) {
                     mof.setBorning(Mirror.me(LinkedList.class).getBorning());
                 }
                 // 抽象类型 Set
@@ -158,8 +156,7 @@ public class ZMoEntityMaker {
                 }
                 // 其他类型，抛错
                 else {
-                    throw Lang.makeThrow("can not found borning for %s",
-                                         fmi.getType());
+                    throw Lang.makeThrow("can not found borning for %s", fmi.getType());
                 }
 
             }

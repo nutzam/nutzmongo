@@ -214,6 +214,11 @@ public class ZMoDoc implements DBObject {
         return this;
     }
 
+    public ZMoDoc ne(String nm, Object v) {
+        put(nm, NEW("$ne", v));
+        return this;
+    }
+
     public NutMap toNutMap() {
         NutMap map = new NutMap();
         for (String key : this.keySet())
@@ -414,8 +419,7 @@ public class ZMoDoc implements DBObject {
                 re.add((T) obj);
             }
             // 如果是 DBObject 可以包裹成 ZMoDoc
-            else if (classOfT == ZMoDoc.class
-                     && DBObject.class.isAssignableFrom(objType)) {
+            else if (classOfT == ZMoDoc.class && DBObject.class.isAssignableFrom(objType)) {
                 re.add((T) ZMoDoc.WRAP((DBObject) obj));
             }
             // 其他情况，试图强转一下
@@ -429,8 +433,7 @@ public class ZMoDoc implements DBObject {
     public List<?> asList() {
         if (DBobj instanceof List<?>)
             return (List<?>) DBobj;
-        throw Lang.makeThrow("wrapping DBobj not instanceof List : %s",
-                             DBobj.getClass());
+        throw Lang.makeThrow("wrapping DBobj not instanceof List : %s", DBobj.getClass());
     }
 
     // ------------------------------------------------------------
@@ -467,8 +470,8 @@ public class ZMoDoc implements DBObject {
             }
             // 否则不能接受
             else {
-                throw Lang.makeThrow("doc._id should be ObjectID(), but '%s'",
-                                     v.getClass().getName());
+                throw Lang.makeThrow("doc._id should be ObjectID(), but '%s'", v.getClass()
+                                                                                .getName());
             }
         }
         // 空值，直接压入
