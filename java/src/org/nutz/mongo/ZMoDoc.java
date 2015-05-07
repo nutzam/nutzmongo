@@ -219,6 +219,26 @@ public class ZMoDoc implements DBObject {
         return this;
     }
 
+    public ZMoDoc gte(String nm, Object v) {
+        put(nm, NEW("$gte", v));
+        return this;
+    }
+
+    public ZMoDoc gt(String nm, Object v) {
+        put(nm, NEW("$gt", v));
+        return this;
+    }
+
+    public ZMoDoc lte(String nm, Object v) {
+        put(nm, NEW("$lte", v));
+        return this;
+    }
+
+    public ZMoDoc lt(String nm, Object v) {
+        put(nm, NEW("$lt", v));
+        return this;
+    }
+
     public NutMap toNutMap() {
         NutMap map = new NutMap();
         for (String key : this.keySet())
@@ -251,7 +271,7 @@ public class ZMoDoc implements DBObject {
     }
 
     public float getFloat(String key) {
-        return getFloat(key, 0.0f);
+        return getFloat(key, Float.NaN);
     }
 
     public float getFloat(String key, float dft) {
@@ -260,7 +280,7 @@ public class ZMoDoc implements DBObject {
     }
 
     public long getLong(String key) {
-        return getLong(key, -1);
+        return getLong(key, -1L);
     }
 
     public long getLong(String key, long dft) {
@@ -269,7 +289,7 @@ public class ZMoDoc implements DBObject {
     }
 
     public double getDouble(String key) {
-        return getDouble(key, 0.0);
+        return getDouble(key, Double.NaN);
     }
 
     public double getDouble(String key, double dft) {
@@ -305,9 +325,13 @@ public class ZMoDoc implements DBObject {
     }
 
     public <T extends Enum<?>> T getEnum(String key, Class<T> classOfEnum) {
+        return getEnum(key, classOfEnum, null);
+    }
+
+    public <T extends Enum<?>> T getEnum(String key, Class<T> classOfEnum, T dft) {
         String s = getString(key);
         if (Strings.isBlank(s))
-            return null;
+            return dft;
         return Castors.me().castTo(s, classOfEnum);
     }
 
