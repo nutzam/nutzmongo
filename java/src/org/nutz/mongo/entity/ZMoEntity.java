@@ -8,6 +8,7 @@ import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 import org.nutz.lang.born.Borning;
+import org.nutz.lang.eject.Ejecting;
 
 /**
  * 描述了一个对象字段到 Mongo Document 之间的字段映射关系
@@ -206,7 +207,9 @@ public class ZMoEntity {
      * @return 字段值
      */
     public Object getValue(Object obj, String javaName) {
-        return javaField(javaName).getEjecting().eject(obj);
+        ZMoField fld = javaField(javaName);
+        Ejecting ejecting = fld.getEjecting();
+        return ejecting.eject(obj);
     }
 
     /**
