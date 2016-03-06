@@ -96,7 +96,7 @@ public class ZMoDB {
      */
     @Deprecated
     public void cleanCursors(boolean force) {
-        db.cleanCursors(force);
+        //db.cleanCursors(force);
     }
 
     /**
