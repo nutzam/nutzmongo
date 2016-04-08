@@ -10,7 +10,7 @@ public class ZMoIdAdaptor implements ZMoAdaptor {
 
     @Override
     public Object toJava(ZMoField fld, Object obj) {
-        if (obj instanceof ObjectId) {
+        if (obj instanceof ObjectId || obj instanceof Integer || obj instanceof Long) {
             if (null != fld) {
                 Mirror<?> mi = fld.getMirror();
                 if (null != mi) {
