@@ -141,7 +141,7 @@ public class ZMo {
             }
             // _id
             else if ("_id".equals(mongoName)) {
-                if (v instanceof ObjectId) {
+                if (v instanceof ObjectId || v instanceof Boolean || v instanceof Integer || v instanceof Long) {
                     doc.put(mongoName, v);
                 } else {
                     doc.put(mongoName, new ObjectId(v.toString()));
