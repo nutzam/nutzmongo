@@ -91,7 +91,7 @@ public class ZMoCollectionAdaptor implements ZMoAdaptor {
                     objMongo = obj;
                 }
                 // Map 或者 POJO
-                if (mi.isMap() || mi.isPojo()) {
+                else if (mi.isMap() || mi.isPojo()) {
                     objMongo = ZMo.me().toDoc(objPojo);
                 }
                 // 其他类型用 smart 转一下咯
