@@ -1,6 +1,6 @@
 package org.nutz.mongo;
 
-import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.nutz.lang.Lang;
@@ -23,7 +23,7 @@ public class ZMongo {
                                      port <= 0 ? ServerAddress.defaultPort()
                                               : port);
         }
-        catch (UnknownHostException e) {
+        catch (Exception e) {
             throw Lang.wrapThrow(e);
         }
     }
@@ -48,7 +48,7 @@ public class ZMongo {
                             MongoCredential cred,
                             MongoClientOptions mopt) {
         return new ZMongo(sa == null ? null : Lang.list(sa),
-                          cred == null ? null : Lang.list(cred),
+                          cred == null ? new ArrayList<MongoCredential>() : Lang.list(cred),
                           mopt);
     }
 

@@ -488,7 +488,7 @@ public class ZMoDoc implements DBObject {
                 }
             }
             // 如果是 boolean 或者整数表示过滤
-            else if (v instanceof Boolean || v instanceof Integer) {
+            else if (v instanceof Boolean || v instanceof Integer || v instanceof Long) {
                 DBobj.put(key, v);
                 return v;
             }

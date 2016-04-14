@@ -403,7 +403,7 @@ public class ZMoCo {
         return dbc.toString();
     }
 
-    public void setObjectClass(Class<?> c) {
+    public void setObjectClass(Class<? extends DBObject> c) {
         dbc.setObjectClass(c);
     }
 
@@ -411,7 +411,7 @@ public class ZMoCo {
         return dbc.getObjectClass();
     }
 
-    public void setInternalClass(String path, Class<?> c) {
+    public void setInternalClass(String path, Class<? extends DBObject> c) {
         dbc.setInternalClass(path, c);
     }
 
