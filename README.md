@@ -29,13 +29,13 @@ MongoDB 驱动的薄封装
 
 也可以将repositories配置放入$HOME/.m2/settings.xml中
 
-或者直接去[快照库下载](https://oss.sonatype.org/content/repositories/snapshots/org/nutz/nutz/1.r.57-SNAPSHOT/)
+或者直接去[快照库下载](https://oss.sonatype.org/content/repositories/snapshots/org/nutz/nutzmongo/1.r.57-SNAPSHOT/)
 
 # 声明Ioc Bean
 
 	var ioc={
 		zMongo : {
-			args : ["127.0.0.1", 27019], // 或者不写参数，默认就是127.0.0.1和27019
+			args : ["127.0.0.1", 27017], // 或者不写参数，默认就是127.0.0.1和27017
 			factory : "org.nutz.mongo.ZMongo#me"
 		},
 		zMoDB : {
