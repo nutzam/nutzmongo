@@ -7,6 +7,7 @@ import org.nutz.lang.Lang;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
@@ -78,6 +79,10 @@ public class ZMongo {
                   MongoCredential.createMongoCRCredential(userName,
                                                           database,
                                                           password.toCharArray()));
+    }
+    
+    public static ZMongo uri(String uri) {
+        return new ZMongo(new MongoClient(new MongoClientURI(uri)));
     }
 
     /**
