@@ -10,8 +10,8 @@ MongoDB 驱动的薄封装
 ```xml
 	<repositories>
 		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<id>nutzcn-snapshots</id>
+			<url>http://maven.nutz.cn/nexus/content/repositories/snapshots</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -21,7 +21,7 @@ MongoDB 驱动的薄封装
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzmongo</artifactId>
-			<version>1.r.57-SNAPSHOT</version>
+			<version>1.r.59-SNAPSHOT</version>
 		</dependency>
 		<!-- 其他依赖 -->
 	</dependencies>
@@ -38,6 +38,10 @@ MongoDB 驱动的薄封装
 			args : ["127.0.0.1", 27017], // 或者不写参数，默认就是127.0.0.1和27017
 			factory : "org.nutz.mongo.ZMongo#me"
 		},
+		//zMongo : {
+		//	args : ["mongodb://root:mypass@192.168.2.199:3717,192.168.2.200:3717/admin?replicaSet=mgset"], // 基于Mongo URI创建ZMongo
+		//	factory : "org.nutz.mongo.ZMongo#uri"
+		//},
 		zMoDB : {
 			args : ["nutzbook"], // 数据库名称
 			factory : "$zMongo#db"

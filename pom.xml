@@ -67,6 +67,11 @@
 			<artifactId>nutz</artifactId>
 			<version>1.r.58</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.21</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -122,9 +127,9 @@
 	
 	<distributionManagement>
 		<snapshotRepository>
-			<id>sonatype-snapshots</id>
-			<name>Sonatype Nexus snapshot repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<id>nutzcn-snapshots</id>
+			<name>NutzCN snapshot repository</name>
+			<url>http://maven.nutz.cn/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 
 		<repository>
