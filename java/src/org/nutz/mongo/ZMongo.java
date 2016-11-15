@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nutz.lang.Lang;
+import org.nutz.lang.Mirror;
+import org.nutz.mongo.interceptor.MongoInterceptor;
+import org.nutz.mongo.interceptor.ZOperationExecutor;
 
+import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.operation.OperationExecutor;
 
 /**
  * 维持了一个与 MongoDB 的连接方式，包括用户名密码等
@@ -76,7 +81,7 @@ public class ZMongo {
                             int port,
                             String database) {
         return me(NEW_SA(host, port),
-                  MongoCredential.createMongoCRCredential(userName,
+                  MongoCredential.createScramSha1Credential(userName,
                                                           database,
                                                           password.toCharArray()));
     }
@@ -125,13 +130,29 @@ public class ZMongo {
      * @return 数据库封装对象
      */
     public ZMoDB db(String dbname) {
-        return new ZMoDB(moclient.getDB(dbname));
+        return db(dbname, null);
+    }
+    
+    public ZMoDB db(String dbname, List<MongoInterceptor> interceptors) {
+        DB db = new ZMongoDB2(moclient, dbname);
+        if (interceptors != null && interceptors.size() > 0) {
+            OperationExecutor proxy = (OperationExecutor) Mirror.me(DB.class).getValue(db, "executor");
+            ZOperationExecutor executor = new ZOperationExecutor(proxy, interceptors);
+            Mirror.me(DB.class).setValue(db, "executor", executor);
+        }
+        return new ZMoDB(db);
     }
 
     /**
      * @return 当前服务器的数据库名称列表
      */
     public List<String> dbnames() {
-        return moclient.getDatabaseNames();
+        return moclient.listDatabaseNames().into(new ArrayList<String>());
+    }
+    
+    
+    public static void main(String[] args) {
+        ZMongo zmo = ZMongo.me("walnut2", "123456", "127.0.0.1", 27017, "walnut2");
+        zmo.db("walnut2").c("obj").find();
     }
 }
