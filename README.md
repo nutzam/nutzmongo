@@ -21,7 +21,7 @@ MongoDB 驱动的薄封装
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzmongo</artifactId>
-			<version>1.r.59-SNAPSHOT</version>
+			<version>1.r.60-SNAPSHOT</version>
 		</dependency>
 		<!-- 其他依赖 -->
 	</dependencies>
