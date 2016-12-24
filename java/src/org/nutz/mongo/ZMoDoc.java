@@ -137,6 +137,11 @@ public class ZMoDoc implements DBObject {
         return this;
     }
 
+    public <T> ZMoDoc nin(String key, T[] vs) {
+        put(key, NEW("$nin", vs));
+        return this;
+    }
+
     public <T> ZMoDoc all(String key, T[] vs) {
         put(key, NEW("$all", vs));
         return this;
@@ -494,8 +499,8 @@ public class ZMoDoc implements DBObject {
             }
             // 否则不能接受
             else {
-                throw Lang.makeThrow("doc._id should be ObjectID(), but '%s'", v.getClass()
-                                                                                .getName());
+                throw Lang.makeThrow("doc._id should be ObjectID(), but '%s'",
+                                     v.getClass().getName());
             }
         }
         // 空值，直接压入
