@@ -73,9 +73,12 @@ MongoDB 驱动的薄封装
 		@Inject 
 		protected ZMongo zmongo;  //注意大小写与配置的名字一致
 		@Inject
-		protected ZMoDB zMoDB; // 当前
+		protected ZMoDB zMoDB; // 当前数据
 		
-		@Inject ZMoCo zMoCoUser;
+		@Inject ZMoCo zMoCoUser; // 按js里面的配置取
+		
+		@Inject("java:$zMoDB.c('role')") // 也可以直接取. 当然了,也可以代码调用zMoDB.c(集合名词)来动态获取
+		ZMoCo zMoCoRole;
 		
 		public void insert(User...users) {
 			zMoCoUser.insert(ZMo.toDocArray(users));
