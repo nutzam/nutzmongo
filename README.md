@@ -33,6 +33,7 @@ MongoDB 驱动的薄封装
 
 # 声明Ioc Bean
 
+```js
 	var ioc={
 		zMongo : {
 			args : ["127.0.0.1", 27017], // 或者不写参数，默认就是127.0.0.1和27017
@@ -61,9 +62,11 @@ MongoDB 驱动的薄封装
 		}
 		*/
 	}
+```
 
 # Service中的注入和使用
 
+```java
 	@IocBean
 	public class XXXService {
 		// 按需注入几个核心对象
@@ -90,3 +93,4 @@ MongoDB 驱动的薄封装
 		
 		// ZMoCoUser还有很多方法哦，请挖掘
 	}
+```
