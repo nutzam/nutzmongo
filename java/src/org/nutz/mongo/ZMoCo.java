@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.log.Log;
@@ -339,6 +337,8 @@ public class ZMoCo {
     }
 
     public long getCount(ZMoDoc query, ZMoDoc fields, long limit, long skip) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("getCount", query, fields, limit, skip));
         return dbc.getCount(query, fields, limit, skip);
     }
 
@@ -347,22 +347,32 @@ public class ZMoCo {
                          long limit,
                          long skip,
                          ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("getCount", query, fields, limit, skip, readPrefs));
         return dbc.getCount(query, fields, limit, skip, readPrefs);
     }
 
     public DBCollection rename(String newName) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("rename", newName));
         return dbc.rename(newName);
     }
 
     public DBCollection rename(String newName, boolean dropTarget) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("rename", newName, dropTarget));
         return dbc.rename(newName, dropTarget);
     }
 
     public ZMoDoc group(ZMoDoc key, ZMoDoc cond, ZMoDoc initial, String reduce) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("group", key, cond, initial, reduce));
         return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce));
     }
 
     public ZMoDoc group(ZMoDoc key, ZMoDoc cond, ZMoDoc initial, String reduce, String finalize) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("group", key, cond, initial, reduce, finalize));
         return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce, finalize));
     }
 
@@ -372,34 +382,50 @@ public class ZMoCo {
                         String reduce,
                         String finalize,
                         ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("group", key, cond, initial, reduce, finalize, readPrefs));
         return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce, finalize, readPrefs));
     }
 
     public ZMoDoc group(GroupCommand cmd) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("group", cmd));
         return ZMoDoc.WRAP(dbc.group(cmd));
     }
 
     public ZMoDoc group(GroupCommand cmd, ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("group", cmd, readPrefs));
         return ZMoDoc.WRAP(dbc.group(cmd, readPrefs));
     }
 
     public List<?> distinct(String key) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("distinct", key));
         return dbc.distinct(key);
     }
 
     public List<?> distinct(String key, ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("distinct", key, readPrefs));
         return dbc.distinct(key, readPrefs);
     }
 
     public List<?> distinct(String key, ZMoDoc query) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("distinct", key, query));
         return dbc.distinct(key, query);
     }
 
     public List<?> distinct(String key, ZMoDoc query, ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("distinct", key, query, readPrefs));
         return dbc.distinct(key, query, readPrefs);
     }
 
     public MapReduceOutput mapReduce(String map, String reduce, String outputTarget, ZMoDoc query) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("mapReduce", map, reduce, outputTarget, query));
         return dbc.mapReduce(map, reduce, outputTarget, query);
     }
 
@@ -408,6 +434,8 @@ public class ZMoCo {
                                      String outputTarget,
                                      OutputType outputType,
                                      ZMoDoc query) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("mapReduce", map, reduce, outputTarget, query));
         return dbc.mapReduce(map, reduce, outputTarget, outputType, query);
     }
 
@@ -417,14 +445,20 @@ public class ZMoCo {
                                      OutputType outputType,
                                      ZMoDoc query,
                                      ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("mapReduce", map, reduce, outputTarget, query, readPrefs));
         return dbc.mapReduce(map, reduce, outputTarget, outputType, query, readPrefs);
     }
 
     public MapReduceOutput mapReduce(MapReduceCommand command) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("mapReduce", command));
         return dbc.mapReduce(command);
     }
 
     public AggregationOutput aggregate(final List<DBObject> pipeline) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("aggregate", pipeline));
         return dbc.aggregate(pipeline);
     }
 
@@ -437,18 +471,26 @@ public class ZMoCo {
     }
 
     public void dropIndex(ZMoDoc keys) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("dropIndex", keys));
         dbc.dropIndex(keys);
     }
 
     public void dropIndex(String name) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("dropIndex", name));
         dbc.dropIndex(name);
     }
 
     public CommandResult getStats() {
+        if (log.isDebugEnabled())
+            log.debug(log_format("getStats"));
         return dbc.getStats();
     }
 
     public boolean isCapped() {
+        if (log.isDebugEnabled())
+            log.debug(log_format("isCapped"));
         return dbc.isCapped();
     }
 
@@ -541,11 +583,11 @@ public class ZMoCo {
     }
 
     protected String _to_json(Object obj) {
-        return Json.toJson(obj, JsonFormat.compact().setIgnoreNull(false).setQuoteName(true));
+        return Json.toJson(obj, JsonFormat.compact().setIgnoreNull(false).setIndent(0));
     }
     
     protected String log_format(String op, Object...args) {
-        StringBuilder sb = new StringBuilder("db.").append(dbc.getName()).append(".").append(op);
+        StringBuilder sb = new StringBuilder("db.").append(getName()).append('.').append(op).append('(');
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
             if (arg != null && (arg instanceof Map || arg.getClass().isArray() || arg instanceof Collection))
@@ -555,7 +597,7 @@ public class ZMoCo {
             if (i != args.length - 1)
                 sb.append(", ");
         }
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 }
