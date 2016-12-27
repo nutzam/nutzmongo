@@ -1,7 +1,16 @@
 package org.nutz.mongo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 
 import com.mongodb.AggregationOutput;
 import com.mongodb.CommandResult;
@@ -28,46 +37,60 @@ public class ZMoCo {
 
     private DBCollection dbc;
 
+    private static final Log log = Logs.get();
+
     public ZMoCo(DBCollection c) {
         this.dbc = c;
     }
 
     public WriteResult insert(ZMoDoc[] arr, WriteConcern concern) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("insert", arr, concern));
         return dbc.insert(arr, concern);
     }
 
-    public WriteResult insert(ZMoDoc[] arr,
-                              WriteConcern concern,
-                              DBEncoder encoder) {
+    public WriteResult insert(ZMoDoc[] arr, WriteConcern concern, DBEncoder encoder) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("insert", arr, concern, encoder));
         return dbc.insert(arr, concern, encoder);
     }
 
     public WriteResult insert(ZMoDoc o, WriteConcern concern) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("insert", o, concern));
         return dbc.insert(o, concern);
     }
 
     public WriteResult insert(ZMoDoc... arr) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("insert", (Object)arr));
         return dbc.insert(arr);
     }
 
     public WriteResult insert(WriteConcern concern, ZMoDoc... arr) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("insert", concern, (Object)arr));
         return dbc.insert(concern, arr);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public WriteResult insert(List<ZMoDoc> list) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("insert", list));
         return dbc.insert((List) list);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public WriteResult insert(List<ZMoDoc> list, WriteConcern concern) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("insert", list, concern));
         return dbc.insert((List) list, concern);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public WriteResult insert(List<ZMoDoc> list,
-                              WriteConcern concern,
-                              DBEncoder encoder) {
+    public WriteResult insert(List<ZMoDoc> list, WriteConcern concern, DBEncoder encoder) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("insert", list, concern, encoder));
         return dbc.insert((List) list, concern, encoder);
     }
 
@@ -76,6 +99,8 @@ public class ZMoCo {
                               boolean upsert,
                               boolean multi,
                               WriteConcern concern) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("update", q, o, upsert, multi, concern));
         return dbc.update(q, o, upsert, multi, concern);
     }
 
@@ -85,30 +110,44 @@ public class ZMoCo {
                               boolean multi,
                               WriteConcern concern,
                               DBEncoder encoder) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("update", q, o, upsert, multi, concern, encoder));
         return dbc.update(q, o, upsert, multi, concern, encoder);
     }
 
     public WriteResult update(ZMoDoc q, ZMoDoc o, boolean upsert, boolean multi) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("update", q, o, upsert, multi));
         return dbc.update(q, o, upsert, multi);
     }
 
     public WriteResult update(ZMoDoc q, ZMoDoc o) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("update", q, o));
         return dbc.update(q, o);
     }
 
     public WriteResult updateMulti(ZMoDoc q, ZMoDoc o) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("updateMulti", q, o));
         return dbc.updateMulti(q, o);
     }
 
     public WriteResult remove(ZMoDoc o, WriteConcern concern) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("remove", o, concern));
         return dbc.remove(o, concern);
     }
 
     public WriteResult remove(ZMoDoc o, WriteConcern concern, DBEncoder encoder) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("remove", o, concern, encoder));
         return dbc.remove(o, concern, encoder);
     }
 
     public WriteResult remove(ZMoDoc o) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("remove", o));
         return dbc.remove(o);
     }
 
@@ -119,6 +158,8 @@ public class ZMoCo {
                                 ZMoDoc update,
                                 boolean returnNew,
                                 boolean upsert) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findAndModify", query, fields, sort, remove, update, returnNew, upsert));
         return ZMoDoc.WRAP(dbc.findAndModify(query,
                                              fields,
                                              sort,
@@ -129,118 +170,171 @@ public class ZMoCo {
     }
 
     public ZMoDoc findAndModify(ZMoDoc query, ZMoDoc sort, ZMoDoc update) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findAndModify", query, sort, update));
         return ZMoDoc.WRAP(dbc.findAndModify(query, sort, update));
     }
 
     public ZMoDoc findAndModify(ZMoDoc query, ZMoDoc update) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findAndModify", query,update));
         return ZMoDoc.WRAP(dbc.findAndModify(query, update));
     }
 
     public ZMoDoc findAndRemove(ZMoDoc query) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findAndRemove", query));
         return ZMoDoc.WRAP(dbc.findAndRemove(query));
     }
 
     public void createIndex(ZMoDoc keys) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("createIndex", keys));
         dbc.createIndex(keys);
     }
 
     public void createIndex(ZMoDoc keys, ZMoDoc options) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("createIndex", keys, options));
         dbc.createIndex(keys, options);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void setHintFields(List<ZMoDoc> lst) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("setHintFields", lst));
         dbc.setHintFields((List) lst);
     }
 
     public DBCursor find(ZMoDoc ref) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("find", ref));
         return dbc.find(ref);
     }
 
     public DBCursor find(ZMoDoc ref, ZMoDoc keys) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("find", ref, keys));
         return dbc.find(ref, keys);
     }
 
     public DBCursor find() {
+        if (log.isDebugEnabled())
+            log.debug(log_format("find"));
         return dbc.find();
     }
 
     public ZMoDoc findOne() {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findOne"));
         return ZMoDoc.WRAP(dbc.findOne());
     }
 
     public ZMoDoc findOne(ZMoDoc o) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findOne", o));
         return ZMoDoc.WRAP(dbc.findOne(o));
     }
 
     public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findOne", o, fields));
         return ZMoDoc.WRAP(dbc.findOne(o, fields));
     }
 
     public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields, ZMoDoc orderBy) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findOne", o, fields, orderBy));
         return ZMoDoc.WRAP(dbc.findOne(o, fields, orderBy));
     }
 
     public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields, ReadPreference readPref) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findOne", o, fields, readPref));
         return ZMoDoc.WRAP(dbc.findOne(o, fields, readPref));
     }
 
-    public ZMoDoc findOne(ZMoDoc o,
-                          ZMoDoc fields,
-                          ZMoDoc orderBy,
-                          ReadPreference readPref) {
+    public ZMoDoc findOne(ZMoDoc o, ZMoDoc fields, ZMoDoc orderBy, ReadPreference readPref) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("findOne", o, fields, orderBy, readPref));
         return ZMoDoc.WRAP(dbc.findOne(o, fields, orderBy, readPref));
     }
 
     public WriteResult save(ZMoDoc jo) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("save", jo));
         return dbc.save(jo);
     }
 
     public WriteResult save(ZMoDoc jo, WriteConcern concern) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("save", jo, concern));
         return dbc.save(jo, concern);
     }
 
     public void dropIndexes() {
+        if (log.isDebugEnabled())
+            log.debug(log_format("dropIndexes"));
         dbc.dropIndexes();
     }
 
     public void dropIndexes(String name) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("dropIndexes", name));
         dbc.dropIndexes(name);
     }
 
     public void drop() {
+        if (log.isDebugEnabled())
+            log.debug(log_format("drop"));
         dbc.drop();
     }
 
     public long count() {
+        if (log.isDebugEnabled())
+            log.debug(log_format("count"));
         return dbc.count();
     }
 
     public long count(ZMoDoc query) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("count", query));
         return dbc.count(query);
     }
 
     public long count(ZMoDoc query, ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("count", query, readPrefs));
         return dbc.count(query, readPrefs);
     }
 
     public long getCount() {
+        if (log.isDebugEnabled())
+            log.debug(log_format("getCount"));
         return dbc.getCount();
     }
 
     public long getCount(ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("getCount", readPrefs));
         return dbc.getCount(readPrefs);
     }
 
     public long getCount(ZMoDoc query) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("getCount", query));
         return dbc.getCount(query);
     }
 
     public long getCount(ZMoDoc query, ZMoDoc fields) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("getCount", query, fields));
         return dbc.getCount(query, fields);
     }
 
     public long getCount(ZMoDoc query, ZMoDoc fields, ReadPreference readPrefs) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("getCount", query, fields, readPrefs));
         return dbc.getCount(query, fields, readPrefs);
     }
 
@@ -268,11 +362,7 @@ public class ZMoCo {
         return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce));
     }
 
-    public ZMoDoc group(ZMoDoc key,
-                        ZMoDoc cond,
-                        ZMoDoc initial,
-                        String reduce,
-                        String finalize) {
+    public ZMoDoc group(ZMoDoc key, ZMoDoc cond, ZMoDoc initial, String reduce, String finalize) {
         return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce, finalize));
     }
 
@@ -282,12 +372,7 @@ public class ZMoCo {
                         String reduce,
                         String finalize,
                         ReadPreference readPrefs) {
-        return ZMoDoc.WRAP(dbc.group(key,
-                                     cond,
-                                     initial,
-                                     reduce,
-                                     finalize,
-                                     readPrefs));
+        return ZMoDoc.WRAP(dbc.group(key, cond, initial, reduce, finalize, readPrefs));
     }
 
     public ZMoDoc group(GroupCommand cmd) {
@@ -314,10 +399,7 @@ public class ZMoCo {
         return dbc.distinct(key, query, readPrefs);
     }
 
-    public MapReduceOutput mapReduce(String map,
-                                     String reduce,
-                                     String outputTarget,
-                                     ZMoDoc query) {
+    public MapReduceOutput mapReduce(String map, String reduce, String outputTarget, ZMoDoc query) {
         return dbc.mapReduce(map, reduce, outputTarget, query);
     }
 
@@ -335,12 +417,7 @@ public class ZMoCo {
                                      OutputType outputType,
                                      ZMoDoc query,
                                      ReadPreference readPrefs) {
-        return dbc.mapReduce(map,
-                             reduce,
-                             outputTarget,
-                             outputType,
-                             query,
-                             readPrefs);
+        return dbc.mapReduce(map, reduce, outputTarget, outputType, query, readPrefs);
     }
 
     public MapReduceOutput mapReduce(MapReduceCommand command) {
@@ -463,4 +540,22 @@ public class ZMoCo {
         return dbc.getDBEncoderFactory();
     }
 
+    protected String _to_json(Object obj) {
+        return Json.toJson(obj, JsonFormat.compact().setIgnoreNull(false).setQuoteName(true));
+    }
+    
+    protected String log_format(String op, Object...args) {
+        StringBuilder sb = new StringBuilder("db.").append(dbc.getName()).append(".").append(op);
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            if (arg != null && (arg instanceof Map || arg.getClass().isArray() || arg instanceof Collection))
+                sb.append(_to_json(arg));
+            else
+                sb.append(arg);
+            if (i != args.length - 1)
+                sb.append(", ");
+        }
+        sb.append(")");
+        return sb.toString();
+    }
 }
