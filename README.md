@@ -5,6 +5,19 @@ MongoDB 驱动的薄封装
 
 # 加入到项目中
 
+发布版
+
+```xml
+	<dependencies>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutzmongo</artifactId>
+			<version>1.r.60</version>
+		</dependency>
+		<!-- 其他依赖 -->
+	</dependencies>
+```
+
 快照版本在每次提交后会自动deploy到sonatype快照库,享受各种bug fix和新功能
 
 ```xml
@@ -21,7 +34,7 @@ MongoDB 驱动的薄封装
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzmongo</artifactId>
-			<version>1.r.60-SNAPSHOT</version>
+			<version>1.r.61-SNAPSHOT</version>
 		</dependency>
 		<!-- 其他依赖 -->
 	</dependencies>
