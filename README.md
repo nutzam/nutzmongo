@@ -66,16 +66,12 @@ MongoDB 驱动的薄封装
 		}
 		/* // 还可以声明几个常用的集合,也可以在Service中生成
 		,zMoCoTopic : {
-			args : ["topic"],
-			factory : "$zMoDB#c"
-			// 或者使用cc方法,集合不存在就创建之
-			// factory : "$zMoDB#cc"
+			args : ["topic", false],
+			factory : "$zMoDB#cc"
 		},
 		zMoCoReply : {
-			args : ["reply"],
-			factory : "$zMoDB#c"
-			// 或者使用cc方法,集合不存在就创建之
-			// factory : "$zMoDB#cc"
+			args : ["reply", false],
+			factory : "$zMoDB#cc"
 		}
 		*/
 	}
