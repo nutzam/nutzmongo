@@ -68,10 +68,14 @@ MongoDB 驱动的薄封装
 		,zMoCoTopic : {
 			args : ["topic"],
 			factory : "$zMoDB#c"
+			// 或者使用cc方法,集合不存在就创建之
+			// factory : "$zMoDB#cc"
 		},
 		zMoCoReply : {
 			args : ["reply"],
 			factory : "$zMoDB#c"
+			// 或者使用cc方法,集合不存在就创建之
+			// factory : "$zMoDB#cc"
 		}
 		*/
 	}
