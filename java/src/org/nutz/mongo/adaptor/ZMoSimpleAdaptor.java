@@ -1,6 +1,7 @@
 package org.nutz.mongo.adaptor;
 
 import org.nutz.castor.Castors;
+import org.nutz.lang.Mirror;
 import org.nutz.mongo.ZMoAdaptor;
 import org.nutz.mongo.entity.ZMoField;
 
@@ -10,9 +11,10 @@ public class ZMoSimpleAdaptor implements ZMoAdaptor {
 
     @Override
     public Object toJava(ZMoField fld, Object obj) {
-        if (null == fld)
+        if (null == fld || obj == null)
             return obj;
-        if (null != fld && null != fld.getMirror() && fld.getMirror().isArray()) {
+        Mirror<?> mirror = fld.getMirror();
+        if (null != mirror && (mirror.isArray() || mirror.isCollection())) {
             return Castors.me().castTo(obj, fld.getEleType());
         }
         return Castors.me().castTo(obj, fld.getType());

@@ -48,7 +48,7 @@ public class ZMoCollectionAdaptor implements ZMoAdaptor {
                     // 就是说一个集合或者数组，映射方式总是一样的
                     // 如果有不一样的，那么就完蛋了
                     if (null == en) {
-                        en = ZMo.me().getEntity(eleMongo.getClass());
+                        en = ZMo.me().getEntity(fld.getEleType());
                     }
                     // 转换
                     elePojo = ZMo.me().fromDoc((DBObject) eleMongo, en);

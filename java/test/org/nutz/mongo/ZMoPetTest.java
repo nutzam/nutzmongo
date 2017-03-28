@@ -3,12 +3,15 @@ package org.nutz.mongo;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.junit.Test;
+import org.nutz.mongo.pojo.Pet2;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Times;
+import org.nutz.lang.random.R;
 import org.nutz.mongo.pojo.Human;
 import org.nutz.mongo.pojo.Pet;
 import org.nutz.mongo.pojo.PetColor;
@@ -181,5 +184,26 @@ public class ZMoPetTest extends ZMoBaseTest {
         assertEquals(p0.getType(), p1.getType());
         assertTrue(ZMo.isObjectId(p1.get_id()));
         assertNull(p1.getComment());
+    }
+    
+    @Test
+    public void test_issue8() {
+        // 初始数据
+        Pet2 pet2 = new Pet2();
+
+        // 改值 & 保存
+        pet2.setName(R.UU32());
+        pet2.setAge(10);
+        pet2.setPets(Arrays.asList(Pet.NEW(R.UU32()), Pet.NEW(R.UU32())));
+        c.save(mo.toDoc(pet2));
+
+        // 再查出来看看
+        ZMoDoc doc = c.findOne(ZMoDoc.NEW("nm", pet2.getName()));
+        Pet2 pet = mo.fromDocToObj(doc, Pet2.class);
+        //assertEquals(pet2.get_id(), pet.get_id());
+        assertEquals(10, pet.getAge());
+        for (Pet p : pet.getPets()) {
+            assertNotNull(p.getName());
+        }
     }
 }
