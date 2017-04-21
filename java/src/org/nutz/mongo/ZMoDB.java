@@ -44,7 +44,7 @@ public class ZMoDB {
     public ZMoCo cc(String name, boolean dropIfExists) {
         // 不存在则创建
         if (!db.collectionExists(name)) {
-            //return createCollection(name, null);
+            return createCollection(name, null);
         }
         // 固定清除
         else if (dropIfExists) {
