@@ -219,6 +219,11 @@ public class ZMoDoc implements DBObject {
         return this;
     }
 
+    public ZMoDoc eq(String nm, Object v) {
+        put(nm, NEW("$eq", v));
+        return this;
+    }
+
     public ZMoDoc ne(String nm, Object v) {
         put(nm, NEW("$ne", v));
         return this;
