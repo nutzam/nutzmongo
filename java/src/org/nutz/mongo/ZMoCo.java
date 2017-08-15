@@ -5,10 +5,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.nutz.dao.pager.Pager;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mongo.entity.ZMoEntity;
 
 import com.mongodb.AggregationOutput;
 import com.mongodb.CommandResult;
@@ -599,5 +601,106 @@ public class ZMoCo {
         }
         sb.append(')');
         return sb.toString();
+    }
+    
+    //----------------------------------------------------------------------------------
+    // ORM 相关的方法, 类似的
+    /**
+     * 查询符合条件的对象
+     * @param klass 需要映射的对象
+     * @param ref 查询条件
+     * @param keys 需要检出的键,可以是null
+     * @param pager 分页对象,recordCount会自动设置, 可以是null
+     * @return 符合条件的对象
+     */
+    public <T> List<T> query(Class<T> klass, ZMoDoc ref, ZMoDoc keys, Pager pager) {
+        return query(ZMo.me().getEntity(klass), ref, keys, pager);
+    }
+    /**
+     * 查询符合条件的对象
+     * @param klass 需要映射的对象
+     * @param ref 查询条件
+     * @param pager 分页对象,recordCount会自动设置, 可以是null
+     * @return 符合条件的对象
+     */
+    public <T> List<T> query(Class<T> klass, ZMoDoc ref, Pager pager) {
+        return query(ZMo.me().getEntity(klass), ref, null, pager);
+    }
+    /**
+     * 查询符合条件的对象
+     * @param klass 需要映射的对象
+     * @param ref 查询条件
+     * @param pageNumber 页数,例如2
+     * @param pageSize 分页大小,例如10
+     * @return 符合条件的对象
+     */
+    public <T> List<T> query(Class<T> klass, ZMoDoc ref, int pageNumber, int pageSize) {
+        return query(ZMo.me().getEntity(klass), ref, null, new Pager(pageNumber, pageSize));
+    }
+
+    /**
+     * 查询符合条件的对象
+     * @param klass 需要映射的对象
+     * @param ref 查询条件
+     * @param keys 需要检出的键,可以是null
+     * @param pageNumber 页数,例如2
+     * @param pageSize 分页大小,例如10
+     * @return 符合条件的对象
+     */
+    public <T> List<T> query(Class<T> klass, ZMoDoc ref, ZMoDoc keys, int pageNumber, int pageSize) {
+        return query(ZMo.me().getEntity(klass), ref, keys, new Pager(pageNumber, pageSize));
+    }
+    /**
+     * 查询符合条件的对象ZMoEntity
+     * @param en 需要映射的实体
+     * @param ref 查询条件
+     * @param keys 需要检出的键,可以是null
+     * @param pager 分页对象
+     * @return 符合条件的对象
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> query(ZMoEntity en, ZMoDoc ref, ZMoDoc keys, Pager pager) {
+        DBCursor cur = find(ref, keys);
+        if (pager != null) {
+            pager.setRecordCount(cur.count());
+            cur.skip(pager.getOffset()).limit(pager.getPageSize());
+        }
+        List<T> list = new ArrayList<T>();
+        while (cur.hasNext()) {
+            list.add((T)ZMo.me().fromDoc(cur.next(), en));
+        }
+        return list;
+    }
+    /**
+     * 查询符合条件的一个对象
+     * @param klass 需要映射的类
+     * @param ref 查询条件
+     * @param keys 需要检出的键,可以是null
+     * @return 符合条件的一个对象
+     */
+    public <T> T fetch(Class<T> klass, ZMoDoc ref, ZMoDoc keys) {
+        return fetch(ZMo.me().getEntity(klass), ref, keys);
+    }
+    /**
+     * 查询符合条件的一个对象
+     * @param klass 需要映射的类
+     * @param ref 查询条件
+     * @return 符合条件的一个对象
+     */
+    public <T> T fetch(Class<T> klass, ZMoDoc keys) {
+        return fetch(ZMo.me().getEntity(klass), null, keys);
+    }
+    /**
+     * 查询符合条件的一个对象
+     * @param en 需要映射的实体
+     * @param ref 查询条件
+     * @param keys 需要检出的键,可以是null
+     * @return 符合条件的一个对象
+     */
+    public <T> T fetch(ZMoEntity en, ZMoDoc ref, ZMoDoc keys) {
+        List<T> list = query(en, ref, keys, new Pager(1, 1));
+        if (list.isEmpty())
+            return null;
+        return list.get(0);
     }
 }
