@@ -1,5 +1,7 @@
 package org.nutz.mongo;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +10,12 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.bson.types.ObjectId;
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
+import org.nutz.json.entity.JsonCallback;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Mirror;
+import org.nutz.lang.util.NutMap;
 import org.nutz.mongo.adaptor.ZMoAs;
 import org.nutz.mongo.entity.ZMoEntity;
 import org.nutz.mongo.entity.ZMoEntityHolder;
@@ -455,4 +462,17 @@ public class ZMo {
         return OBJ_ID.matcher(ID).find();
     }
 
+    static {
+        try {
+            Json.getEntity(Mirror.me(ObjectId.class)).setJsonCallback(new JsonCallback() {
+                public boolean toJson(Object obj, JsonFormat jf, Writer writer, NutMap ctx) throws IOException {
+                    writer.write("\"" + ((ObjectId)obj).toHexString()+"\"");
+                    return true;
+                }
+            });
+        }
+        catch (Exception e) {
+            // 不可能吧?
+        }
+    }
 }

@@ -585,7 +585,7 @@ public class ZMoCo {
     }
 
     protected String _to_json(Object obj) {
-        return Json.toJson(obj, JsonFormat.compact().setIgnoreNull(false).setIndent(0));
+        return Json.toJson(obj, JsonFormat.compact().setIgnoreNull(false));
     }
     
     protected String log_format(String op, Object...args) {
