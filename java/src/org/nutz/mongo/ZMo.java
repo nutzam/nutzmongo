@@ -465,9 +465,12 @@ public class ZMo {
     static {
         try {
             Json.getEntity(Mirror.me(ObjectId.class)).setJsonCallback(new JsonCallback() {
-                public boolean toJson(Object obj, JsonFormat jf, Writer writer, NutMap ctx) throws IOException {
+                public boolean toJson(Object obj, JsonFormat jf, Writer writer) throws IOException {
                     writer.write("\"" + ((ObjectId)obj).toHexString()+"\"");
                     return true;
+                }
+                public Object fromJson(Object obj) {
+                    return null;
                 }
             });
         }
