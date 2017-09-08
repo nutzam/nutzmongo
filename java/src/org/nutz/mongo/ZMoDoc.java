@@ -494,7 +494,7 @@ public class ZMoDoc implements DBObject {
                     return id;
                 }
                 catch (Exception e) {
-                    throw Lang.makeThrow("'%s' not ObjectId", v);
+                    DBobj.put(key, v); // 容忍非法的ObjectId
                 }
             }
             // 如果是 boolean 或者整数表示过滤
