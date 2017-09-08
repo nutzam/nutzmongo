@@ -3,8 +3,10 @@ package org.nutz.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.Document;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
+import org.nutz.lang.Strings;
 import org.nutz.mongo.interceptor.MongoInterceptor;
 import org.nutz.mongo.interceptor.ZOperationExecutor;
 
@@ -14,6 +16,7 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.operation.OperationExecutor;
 
 /**
@@ -151,8 +154,19 @@ public class ZMongo {
     }
     
     
-    public static void main(String[] args) {
-        ZMongo zmo = ZMongo.me("walnut2", "123456", "127.0.0.1", 27017, "walnut2");
-        zmo.db("walnut2").c("obj").find();
+    /**
+     * 获取collection对象 - 指定Collection
+     * @param dbName
+     * @param collName
+     * @return
+     */
+    public MongoCollection<Document> getMongoCollection(String dbName,String collName){
+         if (Strings.isBlank(dbName)) {
+             return null;
+         }
+         if (Strings.isBlank(collName)) {
+             return null;
+         }
+        return moclient.getDatabase(dbName).getCollection(collName);
     }
 }
