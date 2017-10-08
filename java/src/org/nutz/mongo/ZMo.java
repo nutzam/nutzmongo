@@ -24,6 +24,7 @@ import org.nutz.mongo.entity.ZMoField;
 import org.nutz.mongo.entity.ZMoGeneralMapEntity;
 import org.nutz.mongo.fieldfilter.ZMoFF;
 
+import com.mongodb.Cursor;
 import com.mongodb.DBObject;
 
 /**
@@ -151,7 +152,12 @@ public class ZMo {
                 if (v instanceof ObjectId || v instanceof Boolean || v instanceof Integer || v instanceof Long) {
                     doc.put(mongoName, v);
                 } else {
-                    doc.put(mongoName, new ObjectId(v.toString()));
+                    try {
+                        doc.put(mongoName, new ObjectId(v.toString()));
+                    }
+                    catch (IllegalArgumentException e) {
+                        doc.put(mongoName, v);
+                    }
                 }
             }
             // 其他值适配
@@ -477,5 +483,13 @@ public class ZMo {
         catch (Exception e) {
             // 不可能吧?
         }
+    }
+    
+    public List<Object> fromDoc(Cursor cursor, ZMoEntity en) {
+        List<Object> list = new ArrayList<Object>();
+        while (cursor.hasNext()) {
+            list.add(fromDoc(cursor.next(), en));
+        }
+        return list;
     }
 }

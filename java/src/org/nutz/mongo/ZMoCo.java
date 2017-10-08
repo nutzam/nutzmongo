@@ -1,6 +1,7 @@
 package org.nutz.mongo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -8,12 +9,15 @@ import java.util.Map;
 import org.nutz.dao.pager.Pager;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
+import org.nutz.lang.util.Callback;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mongo.entity.ZMoEntity;
 
+import com.mongodb.AggregationOptions;
 import com.mongodb.AggregationOutput;
 import com.mongodb.CommandResult;
+import com.mongodb.Cursor;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBDecoderFactory;
@@ -24,9 +28,11 @@ import com.mongodb.GroupCommand;
 import com.mongodb.MapReduceCommand;
 import com.mongodb.MapReduceCommand.OutputType;
 import com.mongodb.MapReduceOutput;
+import com.mongodb.MongoNamespace;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
+import com.mongodb.operation.AggregateOperation;
 
 /**
  * 对于集合类的薄封装
@@ -463,6 +469,21 @@ public class ZMoCo {
             log.debug(log_format("aggregate", pipeline));
         return dbc.aggregate(pipeline);
     }
+    
+    public Cursor aggregate(final List<DBObject> pipeline, final AggregationOptions options) {
+        if (log.isDebugEnabled())
+            log.debug(log_format("aggregate", pipeline));
+        return dbc.aggregate(pipeline, options);
+    }
+    
+    public void aggregate(final List<DBObject> pipeline, final AggregationOptions options, Callback<Cursor> callback) {
+        Cursor cursor = aggregate(pipeline, options);
+        try {
+            callback.invoke(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
 
     public List<ZMoDoc> getIndexInfo() {
         List<DBObject> dbobjs = dbc.getIndexInfo();
@@ -702,5 +723,11 @@ public class ZMoCo {
         if (list.isEmpty())
             return null;
         return list.get(0);
+    }
+    
+    //--------------------------------------------------------------
+    
+    public AggregationOptions createAggregationOptions() {
+        return new AggregationOptions();
     }
 }
