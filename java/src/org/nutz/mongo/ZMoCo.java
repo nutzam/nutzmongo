@@ -725,9 +725,4 @@ public class ZMoCo {
         return list.get(0);
     }
     
-    //--------------------------------------------------------------
-    
-    public AggregationOptions createAggregationOptions() {
-        return new AggregationOptions();
-    }
 }
